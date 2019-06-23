@@ -1,14 +1,23 @@
-class LinkedListNode <T: Comparable>: CustomDebugStringConvertible {
-    var value: T
-    var next: LinkedListNode<T>?
-    weak var prev: LinkedListNode<T>?
+/// Node implementation for two way linked list. Container for objects of type T.
+public class LinkedListNode <T: Comparable>: CustomDebugStringConvertible {
 
-    init(_ value: T) {
+    /// Value contained in this node
+    public var value: T
+
+    /// Strong reference to next element
+    public var next: LinkedListNode<T>?
+
+    /// Weak reference to prev element
+    public weak var prev: LinkedListNode<T>?
+
+    /// Designated initializer. Nodes are created internally by LinkedList objects.
+    internal init(_ value: T) {
         self.value = value
         self.next = nil
     }
-    
-    var debugDescription: String {
+
+    /// A textual representation of the array and its elements, suitable for debugging.
+    public var debugDescription: String {
         var desc: String = ""
         if let p = prev {
             desc += "\(p.value)"
@@ -44,13 +53,20 @@ class LinkedListNode <T: Comparable>: CustomDebugStringConvertible {
     #endif
 }
 
-class LinkedList<T: Comparable>: CustomDebugStringConvertible {
+/// Two way linked list implementation
+public class LinkedList<T: Comparable>: CustomDebugStringConvertible {
 
-    var first: LinkedListNode<T>? = nil
-    var last: LinkedListNode<T>? = nil
-    var count = 0
+    /// First element (head) in the list
+    public var first: LinkedListNode<T>? = nil
 
-    var debugDescription: String {
+    /// Last element (tail) in the list
+    public var last: LinkedListNode<T>? = nil
+
+    /// The number of elements in the list
+    public var count = 0
+
+    /// A textual representation of the array and its elements, suitable for debugging.
+    public var debugDescription: String {
         var cur = first
         var descs = [String]()
         while cur != nil {
@@ -66,15 +82,15 @@ class LinkedList<T: Comparable>: CustomDebugStringConvertible {
         return "First: \(first == nil ? "nil": first!.debugDescription)\nLast: \(last == nil ? "nil": last!.debugDescription)\nNexts: \(descs.joined(separator: ", "))\nPrevs: \(descs.joined(separator: ", "))\nCount: \(count)"
     }
 
-    /// Designated initializer
-    init(head: LinkedListNode<T>? = nil) {
+    /// Designated initializer. Creates a new instance of a list. If `head` is given it will be the head.
+    public init(head: LinkedListNode<T>? = nil) {
         first = head
         count = first?.countNodes() ?? 0
         last = first?.findLast()
     }
 
     /// Search node with given value. Return node if found otherwise nil.
-    func find(_ value: T) -> LinkedListNode<T>? {
+    public func find(_ value: T) -> LinkedListNode<T>? {
         var cur: LinkedListNode<T>? = first
         while cur != nil && cur?.value != value {
             cur = cur?.next
@@ -83,7 +99,7 @@ class LinkedList<T: Comparable>: CustomDebugStringConvertible {
     }
 
     /// Search node with given value. Return node if found otherwise nil.
-    func findBackwards(_ value: T) -> LinkedListNode<T>? {
+    public func findBackwards(_ value: T) -> LinkedListNode<T>? {
         var cur: LinkedListNode<T>? = last
         while cur != nil && cur?.value != value {
             cur = cur?.prev
@@ -92,7 +108,7 @@ class LinkedList<T: Comparable>: CustomDebugStringConvertible {
     }
 
     /// Appends a new node. Returns newly inserted node.
-    @discardableResult func append(_ value: T) -> LinkedListNode<T>? {
+    @discardableResult public func append(_ value: T) -> LinkedListNode<T>? {
         let new = LinkedListNode(value)
         new.prev = last
         last?.next = new
@@ -105,7 +121,7 @@ class LinkedList<T: Comparable>: CustomDebugStringConvertible {
     }
 
     /// Appends a new node. Returns newly inserted node.
-    @discardableResult func insertFirst(_ value: T) -> LinkedListNode<T>? {
+    @discardableResult public func insertFirst(_ value: T) -> LinkedListNode<T>? {
         let new = LinkedListNode(value)
         new.next = first
         first?.prev = new
@@ -118,7 +134,7 @@ class LinkedList<T: Comparable>: CustomDebugStringConvertible {
     }
 
     /// Inserts a new node with given value after given node. Returns newly inserted node.
-    @discardableResult func insert(_ value: T, after node: LinkedListNode<T>) -> LinkedListNode<T> {
+    @discardableResult public func insert(_ value: T, after node: LinkedListNode<T>) -> LinkedListNode<T> {
         let new = LinkedListNode(value)
         new.prev = node
         new.next = node.next
@@ -132,7 +148,7 @@ class LinkedList<T: Comparable>: CustomDebugStringConvertible {
     }
 
     /// Inserts a new node with given value before given node. Returns newly inserted node.
-    @discardableResult func insert(_ value: T, before node: LinkedListNode<T>) -> LinkedListNode<T> {
+    @discardableResult public func insert(_ value: T, before node: LinkedListNode<T>) -> LinkedListNode<T> {
         let new = LinkedListNode(value)
         new.prev = node.prev
         new.prev?.next = new
@@ -148,7 +164,7 @@ class LinkedList<T: Comparable>: CustomDebugStringConvertible {
     /// Removes node with given value. Returns removed node.
     /// - Parameters
     ///   - value: A linked node to remove
-    @discardableResult func remove(_ value: T) -> LinkedListNode<T>? {
+    @discardableResult public func remove(_ value: T) -> LinkedListNode<T>? {
         if let node = find(value) {
             remove(node: node)
             return node
@@ -157,7 +173,7 @@ class LinkedList<T: Comparable>: CustomDebugStringConvertible {
     }
 
     /// Removes given node.
-    func remove(node: LinkedListNode<T>) {
+    public func remove(node: LinkedListNode<T>) {
         node.next?.prev = node.prev
         node.prev?.next = node.next
         count -= 1

@@ -3,3 +3,7 @@
 /Packages
 /*.xcodeproj
 /.swiftpm
+
+# Jazzy generated folders
+/docs/
+/build/
