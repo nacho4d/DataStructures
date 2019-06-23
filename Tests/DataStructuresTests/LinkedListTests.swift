@@ -7,7 +7,8 @@ final class LinkedListTests: XCTestCase {
         continueAfterFailure = false
         super.setUp()
     }
-    
+
+    /// Helper function that iterates a list to check its nodes order and count. Uses an array for comparison reasons
     func assertList<T>(_ list: LinkedList<T>, _ array: [T], _ message: @autoclosure () -> String = "", file: StaticString = #file, line: UInt = #line) {
         print("Array: \(array)")
         print("Linked: \(list)")
@@ -94,10 +95,12 @@ final class LinkedListTests: XCTestCase {
         XCTAssertEqual(removedNode4.value, 4)
         
         let notFound = list.find(99)
+        assertList(list, [2, 3, 5, 6, 7, 8])
         XCTAssertNil(notFound)
         
         let notRemoved = list.remove(99)
-        XCTAssertNil(notFound)
+        assertList(list, [2, 3, 5, 6, 7, 8])
+        XCTAssertNil(notRemoved)
     }
     
     func testFindBackwards() throws {

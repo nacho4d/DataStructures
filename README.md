@@ -1,3 +1,3 @@
 # DataStructures
 
-A description of this package.
+Data structures like Linked Lists, etc. More comming...
