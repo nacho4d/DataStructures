@@ -6,7 +6,7 @@
 //
 
 /// Stack implementation. Represents a simple last-in-first-out (LIFO) collection of objects.
-public struct Stack<T: Comparable> {
+public struct Stack<T> {
 
     /// Internal storage.
     let storage = LinkedList<T>()
@@ -37,8 +37,12 @@ public struct Stack<T: Comparable> {
     public func removeAll() {
         storage.removeAll()
     }
+}
+
+public extension Stack where T: Equatable {
 
     /// Determines whether an element is in the Stack.
+    /// - Note: Available when `T` conforms to `Equatable`
     public func contains(_ value: T) -> Bool {
         return storage.contains(value)
     }

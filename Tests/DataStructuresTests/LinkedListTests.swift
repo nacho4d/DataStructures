@@ -9,7 +9,7 @@ final class LinkedListTests: XCTestCase {
     }
 
     /// Helper function that iterates a list to check its nodes order and count. Uses an array for comparison reasons
-    func assertList<T>(_ list: LinkedList<T>, _ array: Array<T>, _ message: @autoclosure () -> String = "", file: StaticString = #file, line: UInt = #line) {
+    func assertList<T: Equatable>(_ list: LinkedList<T>, _ array: Array<T>, _ message: @autoclosure () -> String = "", file: StaticString = #file, line: UInt = #line) {
         print("Array: \(array)")
         print("Linked: \(list)")
         // check first and value

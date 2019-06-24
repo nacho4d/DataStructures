@@ -8,7 +8,7 @@
 import Foundation
 
 /// Queue implementation. Represents a first-in, first-out (FIFO) collection of objects.
-public struct Queue<T: Comparable> {
+public struct Queue<T> {
 
     /// Internal storage.
     let storage = LinkedList<T>()
@@ -43,7 +43,12 @@ public struct Queue<T: Comparable> {
         storage.removeAll()
     }
 
+}
+
+public extension Queue where T: Equatable {
+
     /// Determines whether an element is in the Stack.
+    /// - Note: Available when `T` conforms to `Equatable`
     public func contains(_ value: T) -> Bool {
         return storage.contains(value)
     }

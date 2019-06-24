@@ -6,7 +6,7 @@
 //
 
 /// Node implementation for two way linked list. Container for objects of type T.
-public class LinkedListNode <T: Comparable>: CustomDebugStringConvertible {
+public class LinkedListNode <T>: CustomDebugStringConvertible {
 
     /// Value contained in this node
     public var value: T
@@ -61,7 +61,7 @@ public class LinkedListNode <T: Comparable>: CustomDebugStringConvertible {
 }
 
 /// Linked List implementation. Represents a doubly linked list.
-public class LinkedList<T: Comparable>: CustomDebugStringConvertible {
+public class LinkedList<T>: CustomDebugStringConvertible {
 
     /// First element (head) in the list
     public var first: LinkedListNode<T>? = nil
@@ -96,21 +96,31 @@ public class LinkedList<T: Comparable>: CustomDebugStringConvertible {
         last = first?.findLast()
     }
 
-    /// Search node with given value. Return node if found otherwise nil.
-    /// - Complexity: O(*n*), where *n* is the length of the collection.
-    public func find(_ value: T) -> LinkedListNode<T>? {
+//    public init<S: Sequence, >(sequence: S) {
+//        first = nil
+//        count = 0
+//        last = nil
+//        for e in sequence {
+//            append(e)
+//        }
+//    }
+
+    /// Search node that matches given predicate. Return node if found otherwise nil.
+    /// - Parameters
+    ///   - predicate: A closure that takes an element of the sequence as its argument and returns a Boolean value indicating whether the element is a match.
+    public func find(where predicate: ((T) -> Bool)) -> LinkedListNode<T>? {
         var cur: LinkedListNode<T>? = first
-        while cur != nil && cur?.value != value {
+        while cur != nil && !predicate(cur!.value) {
             cur = cur?.next
         }
         return cur
     }
 
-    /// Search node with given value. Return node if found otherwise nil.
+    /// Search node that matches given predicate starting from the end. Return node if found otherwise nil.
     /// - Complexity: O(*n*), where *n* is the length of the collection.
-    public func findBackwards(_ value: T) -> LinkedListNode<T>? {
+    public func findBackwards(where predicate: ((T) -> Bool)) -> LinkedListNode<T>? {
         var cur: LinkedListNode<T>? = last
-        while cur != nil && cur?.value != value {
+        while cur != nil && !predicate(cur!.value) {
             cur = cur?.prev
         }
         return cur
@@ -174,18 +184,6 @@ public class LinkedList<T: Comparable>: CustomDebugStringConvertible {
         return new
     }
 
-    /// Removes node with given value. Returns removed node.
-    /// - Parameters
-    ///   - value: A linked node to remove
-    /// - Complexity: O(1).
-    @discardableResult public func remove(_ value: T) -> LinkedListNode<T>? {
-        if let node = find(value) {
-            remove(node: node)
-            return node
-        }
-        return nil
-    }
-
     /// Removes given node.
     /// - Complexity: O(1).
     public func remove(node: LinkedListNode<T>) {
@@ -206,12 +204,6 @@ public class LinkedList<T: Comparable>: CustomDebugStringConvertible {
         first = nil
         last = nil
         count = 0
-    }
-
-    /// Searchs value and return yes if found otherwise no.
-    /// - Complexity: O(*n*), where *n* is the length of the collection.
-    public func contains(_ value: T) -> Bool {
-        return find(value) != nil
     }
 
     /// Search self for insertion position of given linked node and inserts it.
@@ -235,5 +227,58 @@ public class LinkedList<T: Comparable>: CustomDebugStringConvertible {
     /// Same as insert(_ node: LinkedNode)
     func insert(nodeWithValue value: T, evaluate: ((T) -> Bool)) {
         insert(LinkedListNode(value), evaluate: evaluate)
+    }
+
+    /// Searchs value and return yes if found otherwise no.
+    /// - Complexity: O(*n*), where *n* is the length of the collection.
+    public func contains(node: LinkedList<T>) -> Bool {
+        var cur: LinkedListNode<T>? = first
+        while cur != nil && cur !== node {
+            cur = cur?.next
+        }
+        return cur === node
+    }
+}
+
+extension LinkedList where T: Equatable {
+
+    /// Searchs value and return yes if found otherwise no.
+    /// - Parameters:
+    ///   - value: A value to search/compare
+    /// - Complexity: O(*n*), where *n* is the length of the collection.
+    /// - Note: Available when `T` conforms to `Equatable`
+    public func contains(_ value: T) -> Bool {
+        return find(where: { $0 == value }) != nil
+    }
+
+    /// Search node with given value. Return node if found otherwise nil.
+    /// - Parameters:
+    ///   - value: A value to search
+    /// - Complexity: O(*n*), where *n* is the length of the collection.
+    /// - Note: Available when `T` conforms to `Equatable`
+    public func find(_ value: T) -> LinkedListNode<T>? {
+        return find(where: { $0 == value })
+    }
+
+    /// Search node with given value. Return node if found otherwise nil.
+    /// - Parameters
+    ///   - value: A value to search
+    /// - Complexity: O(*n*), where *n* is the length of the collection.
+    /// - Note: Available when `T` conforms to `Equatable`
+    public func findBackwards(_ value: T) -> LinkedListNode<T>? {
+        return findBackwards(where: { $0 == value })
+    }
+
+    /// Removes node with given value. Returns removed node.
+    /// - Parameters
+    ///   - value: A linked node to remove
+    /// - Complexity: O(1).
+    /// - Note: Available when `T` conforms to `Equatable`
+    @discardableResult public func remove(_ value: T) -> LinkedListNode<T>? {
+        if let node = find(value) {
+            remove(node: node)
+            return node
+        }
+        return nil
     }
 }
