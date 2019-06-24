@@ -11,6 +11,15 @@ public struct Stack<T> {
     /// Internal storage.
     let storage = LinkedList<T>()
 
+    public init() {
+    }
+
+    public init<S: Sequence>(sequence: S) where S.Element == T {
+        for s in sequence {
+            storage.append(s)
+        }
+    }
+
     /// Gets the number of elements contained in the Stack.
     public var count: Int {
         return storage.count
@@ -39,7 +48,7 @@ public struct Stack<T> {
     }
 }
 
-public extension Stack where T: Equatable {
+extension Stack where T: Equatable {
 
     /// Determines whether an element is in the Stack.
     /// - Note: Available when `T` conforms to `Equatable`

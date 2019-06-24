@@ -13,6 +13,15 @@ public struct Queue<T> {
     /// Internal storage.
     let storage = LinkedList<T>()
 
+    public init() {
+    }
+
+    public init<S: Sequence>(sequence: S) where S.Element == T {
+        for s in sequence {
+            storage.append(s)
+        }
+    }
+
     /// Gets the number of elements contained in the Stack.
     public var count: Int {
         return storage.count
@@ -45,7 +54,7 @@ public struct Queue<T> {
 
 }
 
-public extension Queue where T: Equatable {
+extension Queue where T: Equatable {
 
     /// Determines whether an element is in the Stack.
     /// - Note: Available when `T` conforms to `Equatable`

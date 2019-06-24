@@ -96,14 +96,14 @@ public class LinkedList<T>: CustomDebugStringConvertible {
         last = first?.findLast()
     }
 
-//    public init<S: Sequence, >(sequence: S) {
-//        first = nil
-//        count = 0
-//        last = nil
-//        for e in sequence {
-//            append(e)
-//        }
-//    }
+    public init<S: Sequence>(sequence: S) where S.Element == T {
+        first = nil
+        count = 0
+        last = nil
+        for e in sequence {
+            append(e)
+        }
+    }
 
     /// Search node that matches given predicate. Return node if found otherwise nil.
     /// - Parameters
