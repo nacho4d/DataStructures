@@ -9,7 +9,7 @@ final class LinkedListTests: XCTestCase {
     }
 
     /// Helper function that iterates a list to check its nodes order and count. Uses an array for comparison reasons
-    func assertList<T>(_ list: LinkedList<T>, _ array: [T], _ message: @autoclosure () -> String = "", file: StaticString = #file, line: UInt = #line) {
+    func assertList<T>(_ list: LinkedList<T>, _ array: Array<T>, _ message: @autoclosure () -> String = "", file: StaticString = #file, line: UInt = #line) {
         print("Array: \(array)")
         print("Linked: \(list)")
         // check first and value
@@ -115,6 +115,33 @@ final class LinkedListTests: XCTestCase {
         XCTAssertFalse(node5Find === node5BackFind)
         XCTAssertTrue(node5 === node5Find)
         XCTAssertTrue(node5Back === node5BackFind)
+    }
+
+    func testRemoveAll() throws {
+        let list = LinkedList<Int>()
+        list.append(0)
+        list.append(5)
+        list.append(1)
+        list.append(5)
+        list.append(2)
+        assertList(list, [0, 5, 1, 5, 2])
+
+        list.removeAll()
+        assertList(list, [])
+    }
+
+    func testContains() throws {
+        let list = LinkedList<Int>()
+        list.append(0)
+        list.append(1)
+        list.append(5)
+        assertList(list, [0, 1, 5])
+        XCTAssertTrue(list.contains(1))
+        XCTAssertFalse(list.contains(99))
+    }
+
+    func testInitWithIterable() throws {
+
     }
 
     static var allTests = [

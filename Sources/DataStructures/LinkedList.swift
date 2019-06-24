@@ -1,3 +1,10 @@
+//
+//  LinkedList.swift
+//
+//
+//  Created by Guillermo Ignacio Enriquez Gutierrez on 2019/06/24.
+//
+
 /// Node implementation for two way linked list. Container for objects of type T.
 public class LinkedListNode <T: Comparable>: CustomDebugStringConvertible {
 
@@ -53,7 +60,7 @@ public class LinkedListNode <T: Comparable>: CustomDebugStringConvertible {
     #endif
 }
 
-/// Two way linked list implementation
+/// Linked List implementation. Represents a doubly linked list.
 public class LinkedList<T: Comparable>: CustomDebugStringConvertible {
 
     /// First element (head) in the list
@@ -90,6 +97,7 @@ public class LinkedList<T: Comparable>: CustomDebugStringConvertible {
     }
 
     /// Search node with given value. Return node if found otherwise nil.
+    /// - Complexity: O(*n*), where *n* is the length of the collection.
     public func find(_ value: T) -> LinkedListNode<T>? {
         var cur: LinkedListNode<T>? = first
         while cur != nil && cur?.value != value {
@@ -99,6 +107,7 @@ public class LinkedList<T: Comparable>: CustomDebugStringConvertible {
     }
 
     /// Search node with given value. Return node if found otherwise nil.
+    /// - Complexity: O(*n*), where *n* is the length of the collection.
     public func findBackwards(_ value: T) -> LinkedListNode<T>? {
         var cur: LinkedListNode<T>? = last
         while cur != nil && cur?.value != value {
@@ -108,6 +117,7 @@ public class LinkedList<T: Comparable>: CustomDebugStringConvertible {
     }
 
     /// Appends a new node. Returns newly inserted node.
+    /// - Complexity: O(1).
     @discardableResult public func append(_ value: T) -> LinkedListNode<T>? {
         let new = LinkedListNode(value)
         new.prev = last
@@ -121,6 +131,7 @@ public class LinkedList<T: Comparable>: CustomDebugStringConvertible {
     }
 
     /// Appends a new node. Returns newly inserted node.
+    /// - Complexity: O(1).
     @discardableResult public func insertFirst(_ value: T) -> LinkedListNode<T>? {
         let new = LinkedListNode(value)
         new.next = first
@@ -134,6 +145,7 @@ public class LinkedList<T: Comparable>: CustomDebugStringConvertible {
     }
 
     /// Inserts a new node with given value after given node. Returns newly inserted node.
+    /// - Complexity: O(1).
     @discardableResult public func insert(_ value: T, after node: LinkedListNode<T>) -> LinkedListNode<T> {
         let new = LinkedListNode(value)
         new.prev = node
@@ -148,6 +160,7 @@ public class LinkedList<T: Comparable>: CustomDebugStringConvertible {
     }
 
     /// Inserts a new node with given value before given node. Returns newly inserted node.
+    /// - Complexity: O(1).
     @discardableResult public func insert(_ value: T, before node: LinkedListNode<T>) -> LinkedListNode<T> {
         let new = LinkedListNode(value)
         new.prev = node.prev
@@ -164,6 +177,7 @@ public class LinkedList<T: Comparable>: CustomDebugStringConvertible {
     /// Removes node with given value. Returns removed node.
     /// - Parameters
     ///   - value: A linked node to remove
+    /// - Complexity: O(1).
     @discardableResult public func remove(_ value: T) -> LinkedListNode<T>? {
         if let node = find(value) {
             remove(node: node)
@@ -173,6 +187,7 @@ public class LinkedList<T: Comparable>: CustomDebugStringConvertible {
     }
 
     /// Removes given node.
+    /// - Complexity: O(1).
     public func remove(node: LinkedListNode<T>) {
         node.next?.prev = node.prev
         node.prev?.next = node.next
@@ -183,6 +198,20 @@ public class LinkedList<T: Comparable>: CustomDebugStringConvertible {
         if node === last {
             last = last?.prev
         }
+    }
+
+    /// Removes all objects from the list
+    /// - Complexity: O(1).
+    public func removeAll() {
+        first = nil
+        last = nil
+        count = 0
+    }
+
+    /// Searchs value and return yes if found otherwise no.
+    /// - Complexity: O(*n*), where *n* is the length of the collection.
+    public func contains(_ value: T) -> Bool {
+        return find(value) != nil
     }
 
     /// Search self for insertion position of given linked node and inserts it.

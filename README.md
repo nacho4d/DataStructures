@@ -8,11 +8,12 @@ Data structures like Linked Lists, etc. More comming...
 
 Documentation can be geneated using `jazzy` command.
 
+    swift package generate-xcodeproj
     jazzy -x -scheme,DataStructures-Package -m DataStructures
-    open docs/index.html
+    open -a /Applications/Google\ Chrome.app docs/index.html
 
 ## Develop
 
-Open package in Xcode and develop as usual.
+Open package in Xcode 11 or higher and develop as usual.
 
     open package.swift
