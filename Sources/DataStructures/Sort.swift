@@ -74,14 +74,13 @@ extension Array {
 
     // MARK: -
 
-    /// Insertion sort implementation. Bubble Sort is a simple sorting algorithm similar to when people manually sort cards in a bridge hand.
+    /// Insertion sort implementation. Insertion Sort is a simple sorting algorithm similar to when people manually sort cards in a bridge hand.
     ///
     /// -  Note:Other algorithms generally run faster than insertion sort. It is much less efficient on large lists than more advanced algorithms such as quicksort, heapsort, or merge sort. However, insertion sort provides several advantages: Efficient for small data sets (much like other quadratic sorting algorithms), it can also be useful when input array is almost sorted, only few elements are misplaced in complete big array.Other advantage is it can sort a list as it receives it. It will not be efficient in the case of a reverse-ordered collection.
     ///
     /// - Complexity:Worst-case and average time complexity is O(*n^2*)  where *n* is the length of the array. Best case time complexity is O(*n*) when array is already sorted. Space complexity is O(1).
     ///
     /// **Example**
-    ///
     ///
     ///  [ **5** 1 4 2 8 ] → [ 5 **1** 4 2 8 ], 1st element, there is nothing in the left
     ///
@@ -123,6 +122,12 @@ extension Array {
     }
 
     // MARK: -
+
+    /// TODO. Binary Insertion sort implementation. Similar to Insertion Sort except it uses a binary search instead of a linear search algorithm for calculating index of each element.
+    public mutating func sortBinaryInsertion(by compare: Comparator) {
+        // TODO: implement this when binary search algorithm is implemented.
+        sortInsertion(by: compare)
+    }
 
     public mutating func sortQuick(by compare: Comparator) {
         if count < 2 {
