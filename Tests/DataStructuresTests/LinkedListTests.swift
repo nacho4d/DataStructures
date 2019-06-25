@@ -65,14 +65,14 @@ final class LinkedListTests: XCTestCase {
         list.append(7)
         assertList(list, [3, 5, 7])
         
-        let node5 = try XCTUnwrap(list.find(5))
+        let node5 = try XCTUnwrap(list.findFirst(5))
         assertList(list, [3, 5, 7])
         
         let node6 = try XCTUnwrap(list.insert(6, after: node5))
         assertList(list, [3, 5, 6, 7])
         XCTAssertEqual(node6.value, 6)
         
-        let node7 = try XCTUnwrap(list.find(7))
+        let node7 = try XCTUnwrap(list.findFirst(7))
         assertList(list, [3, 5, 6, 7])
         
         let node8 = try XCTUnwrap(list.insert(8, after: node7))
@@ -83,7 +83,7 @@ final class LinkedListTests: XCTestCase {
         assertList(list, [3, 4, 5, 6, 7, 8])
         XCTAssertEqual(node4.value, 4)
         
-        let node3 = try XCTUnwrap(list.find(3))
+        let node3 = try XCTUnwrap(list.findFirst(3))
         assertList(list, [3, 4, 5, 6, 7, 8])
         
         let node2 = try XCTUnwrap(list.insert(2, before: node3))
@@ -94,7 +94,7 @@ final class LinkedListTests: XCTestCase {
         assertList(list, [2, 3, 5, 6, 7, 8])
         XCTAssertEqual(removedNode4.value, 4)
         
-        let notFound = list.find(99)
+        let notFound = list.findFirst(99)
         assertList(list, [2, 3, 5, 6, 7, 8])
         XCTAssertNil(notFound)
         
@@ -110,8 +110,8 @@ final class LinkedListTests: XCTestCase {
         list.append(1)
         let node5Back = list.append(5)
         list.append(2)
-        let node5Find = try XCTUnwrap(list.find(5))
-        let node5BackFind = try XCTUnwrap(list.findBackwards(5))
+        let node5Find = try XCTUnwrap(list.findFirst(5))
+        let node5BackFind = try XCTUnwrap(list.findLast(5))
         XCTAssertFalse(node5Find === node5BackFind)
         XCTAssertTrue(node5 === node5Find)
         XCTAssertTrue(node5Back === node5BackFind)

@@ -108,7 +108,7 @@ public class LinkedList<T>: CustomDebugStringConvertible {
     /// Search node that matches given predicate. Return node if found otherwise nil.
     /// - Parameters
     ///   - predicate: A closure that takes an element of the sequence as its argument and returns a Boolean value indicating whether the element is a match.
-    public func find(where predicate: ((T) -> Bool)) -> LinkedListNode<T>? {
+    public func findFirst(where predicate: ((T) -> Bool)) -> LinkedListNode<T>? {
         var cur: LinkedListNode<T>? = first
         while cur != nil && !predicate(cur!.value) {
             cur = cur?.next
@@ -118,7 +118,7 @@ public class LinkedList<T>: CustomDebugStringConvertible {
 
     /// Search node that matches given predicate starting from the end. Return node if found otherwise nil.
     /// - Complexity: O(*n*), where *n* is the length of the collection.
-    public func findBackwards(where predicate: ((T) -> Bool)) -> LinkedListNode<T>? {
+    public func findLast(where predicate: ((T) -> Bool)) -> LinkedListNode<T>? {
         var cur: LinkedListNode<T>? = last
         while cur != nil && !predicate(cur!.value) {
             cur = cur?.prev
@@ -248,7 +248,7 @@ extension LinkedList where T: Equatable {
     /// - Complexity: O(*n*), where *n* is the length of the collection.
     /// - Note: Available when `T` conforms to `Equatable`
     public func contains(_ value: T) -> Bool {
-        return find(where: { $0 == value }) != nil
+        return findFirst(where: { $0 == value }) != nil
     }
 
     /// Search node with given value. Return node if found otherwise nil.
@@ -256,8 +256,8 @@ extension LinkedList where T: Equatable {
     ///   - value: A value to search
     /// - Complexity: O(*n*), where *n* is the length of the collection.
     /// - Note: Available when `T` conforms to `Equatable`
-    public func find(_ value: T) -> LinkedListNode<T>? {
-        return find(where: { $0 == value })
+    public func findFirst(_ value: T) -> LinkedListNode<T>? {
+        return findFirst(where: { $0 == value })
     }
 
     /// Search node with given value. Return node if found otherwise nil.
@@ -265,8 +265,8 @@ extension LinkedList where T: Equatable {
     ///   - value: A value to search
     /// - Complexity: O(*n*), where *n* is the length of the collection.
     /// - Note: Available when `T` conforms to `Equatable`
-    public func findBackwards(_ value: T) -> LinkedListNode<T>? {
-        return findBackwards(where: { $0 == value })
+    public func findLast(_ value: T) -> LinkedListNode<T>? {
+        return findLast(where: { $0 == value })
     }
 
     /// Removes node with given value. Returns removed node.
@@ -275,7 +275,7 @@ extension LinkedList where T: Equatable {
     /// - Complexity: O(1).
     /// - Note: Available when `T` conforms to `Equatable`
     @discardableResult public func remove(_ value: T) -> LinkedListNode<T>? {
-        if let node = find(value) {
+        if let node = findFirst(value) {
             remove(node: node)
             return node
         }

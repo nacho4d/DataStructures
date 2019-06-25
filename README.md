@@ -20,8 +20,9 @@ Open package in Xcode 11 or higher and develop as usual.
 
 ## TODOs
 
-- Rename `find(where:)` and `findBackwards(where:)` to `findFirst(where:)` and `findLast(where:)`
 - Rethink naming for sorting methods. Specially `(by:)` does not sound OK.
+- Make LinkedListNode next, prev, readonly. Only LinkedList should be able to modify them.
+- Add list property to LinkedListNode as C# implementation. It should help avoid infinite, loops and other weird cases. (Two lists with the same node, etc)
 - Improve documentation specially in sort methods. Mention Order/Space Complexity, better, worst, average case too.
 - Implement more tests
 - Add Insert Sort and others?
