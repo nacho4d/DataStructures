@@ -205,6 +205,9 @@ extension Array {
 
     // MARK: -
 
+    /// Merge Sort implementaion. Merge Sort is a Divide and Conquer algorithm. It divides input array in two halves, calls itself for the two halves and then merges the two sorted halves
+    /// - Complexity: Time complexity for all 3 cases (worst, average and best) is O(*n* log *n*) as merge sort always divides the array in two halves and take linear time to merge two halves
+    /// - Note: This is NOT an in-place sort
     public mutating func sortMerge(by compare: Comparator) {
         if count < 2 {
             return
@@ -250,7 +253,7 @@ extension Array {
         }
         i = low
         while i <= high {
-            self[i] = b[i];
+            self[i] = b[i]
             i = i + 1
         }
     }
