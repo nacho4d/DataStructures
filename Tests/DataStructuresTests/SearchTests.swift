@@ -8,6 +8,27 @@
 import XCTest
 @testable import DataStructures
 
+extension ComparisonResult {
+    init(_ num: Int) {
+        if num < 0 {
+            self = .orderedAscending
+        } else if num == 0 {
+            self = .orderedSame
+        } else {
+            self = .orderedDescending
+        }
+    }
+}
+extension ComparisonResult: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        switch self {
+        case .orderedAscending: return "orderedAscending"
+        case .orderedDescending: return "orderedDescending"
+        case .orderedSame: return "orderedSame"
+        }
+    }
+}
+
 final class SearchTests: XCTestCase {
 
     override func setUp() {
@@ -18,7 +39,7 @@ final class SearchTests: XCTestCase {
     func testLinearSearch() throws {
         var calledTimes = 0
         let arr = [1, 3, 5, 7, 9]
-        let index = arr.searchLinear { calledTimes += 1; return 7 - $0 }
+        let index = arr.searchLinear { e, i in calledTimes += 1; return ComparisonResult(7 - e) }
         XCTAssertNotNil(index)
         XCTAssertEqual(index, 3)
         XCTAssertEqual(calledTimes, 4)
@@ -27,7 +48,7 @@ final class SearchTests: XCTestCase {
     func testLinearInverted() throws {
         var calledTimes = 0
         let arr = [9, 7, 5, 3, 1]
-        let index = arr.searchLinear { calledTimes += 1; return $0 - 7}
+        let index = arr.searchLinear { e, i in calledTimes += 1; return ComparisonResult(e - 7) }
         XCTAssertNotNil(index)
         XCTAssertEqual(index, 1)
         XCTAssertEqual(calledTimes, 2)
@@ -36,7 +57,7 @@ final class SearchTests: XCTestCase {
     func testLinearSearchNotFound() throws {
         var calledTimes = 0
         let arr = [1, 3, 5, 7, 9, 11]
-        let index = arr.searchLinear { calledTimes += 1; return 4 - $0 }
+        let index = arr.searchLinear { e, i in calledTimes += 1; return ComparisonResult(4 - e) }
         XCTAssertNil(index)
         XCTAssertEqual(calledTimes, 3)
     }
@@ -44,7 +65,7 @@ final class SearchTests: XCTestCase {
     func testBinarySearch() throws {
         var calledTimes = 0
         let arr = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21]
-        let index = arr.searchBinary { calledTimes += 1; return 7 - $0 }
+        let index = arr.searchBinary { e, i in calledTimes += 1; return ComparisonResult(7 - e) }
         XCTAssertNotNil(index)
         XCTAssertEqual(index, 3)
         XCTAssertEqual(calledTimes, 3)
@@ -53,7 +74,7 @@ final class SearchTests: XCTestCase {
     func testBinarySearchInverted() throws {
         var calledTimes = 0
         let arr = [21, 19, 17, 15, 13, 11, 9, 7, 5, 3, 1]
-        let index = arr.searchBinary { calledTimes += 1; return $0 - 7 }
+        let index = arr.searchBinary { e, i in calledTimes += 1; return ComparisonResult(e - 7) }
         XCTAssertNotNil(index)
         XCTAssertEqual(index, 7)
         XCTAssertEqual(calledTimes, 4)
@@ -62,9 +83,60 @@ final class SearchTests: XCTestCase {
     func testBinarySearchNotFound() throws {
         var calledTimes = 0
         let arr = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31]
-        let index = arr.searchBinary { calledTimes += 1; return 28 - $0 }
+        let index = arr.searchBinary { e, i in calledTimes += 1; return ComparisonResult(28 - e) }
         XCTAssertNil(index)
-        XCTAssertEqual(calledTimes, 5)
+        XCTAssertEqual(calledTimes, 4) // 17, 25, 29, 27
+    }
+
+    func testBinarySearchInternal() throws {
+        let arr = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31]
+        var l: Int
+        var u: Int
+        var index: Int?
+        l = 2
+        u = 7
+        index = arr.__searchBinary(lowerIndex: &l, upperIndex: &u) { elem, i in return ComparisonResult(1 - elem) }
+        XCTAssertNil(index)
+
+        l = 2
+        u = 7
+        index = arr.__searchBinary(lowerIndex: &l, upperIndex: &u) { elem, i in return ComparisonResult(3 - elem) }
+        XCTAssertNil(index)
+
+        l = 2
+        u = 7
+        index = arr.__searchBinary(lowerIndex: &l, upperIndex: &u) { elem, i in return ComparisonResult(5 - elem) }
+        XCTAssertEqual(index, 2)
+
+        l = 2
+        u = 7
+        index = arr.__searchBinary(lowerIndex: &l, upperIndex: &u) { elem, i in return ComparisonResult(7 - elem) }
+        XCTAssertEqual(index, 3)
+
+        l = 2
+        u = 7
+        index = arr.__searchBinary(lowerIndex: &l, upperIndex: &u) { elem, i in return ComparisonResult(9 - elem) }
+        XCTAssertEqual(index, 4)
+
+        l = 2
+        u = 7
+        index = arr.__searchBinary(lowerIndex: &l, upperIndex: &u) { elem, i in return ComparisonResult(11 - elem) }
+        XCTAssertEqual(index, 5)
+
+        l = 2
+        u = 7
+        index = arr.__searchBinary(lowerIndex: &l, upperIndex: &u) { elem, i in return ComparisonResult(13 - elem) }
+        XCTAssertEqual(index, 6)
+
+        l = 2
+        u = 7
+        index = arr.__searchBinary(lowerIndex: &l, upperIndex: &u) { elem, i in return ComparisonResult(15 - elem) }
+        XCTAssertEqual(index, 7)
+
+        l = 2
+        u = 7
+        index = arr.__searchBinary(lowerIndex: &l, upperIndex: &u) { elem, i in return ComparisonResult(17 - elem) }
+        XCTAssertNil(index)
     }
 
 }

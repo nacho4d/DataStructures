@@ -9,8 +9,19 @@ import Foundation
 
 extension Array {
 
-    /// Comparator block. Return tru when left element should be first, otherwise return false
+    /// Compare predicate block. Expected to returns true when left element should be placed(sorted) first than right element
+    /// - Returns: Return true when left element should be placed(sorted) first than right element otherwise false
     public typealias Comparator = (Element, Element) -> Bool
+
+    /// Compare predicate block. Expected to returns true when left element should be placed(sorted) first than right element
+    /// - Returns: Return true when left element should be placed(sorted) first than right element otherwise false
+    public typealias Comparator2 = (Element, Element) -> ComparisonResult
+
+    /// Compare predicate block.
+    /// - Parameters element: element to be compared
+    /// - Parameters index: index of the element
+    /// - Returns: Zero when element is found. Positive when target is possibly at the right of the element. And negative when target is possibly at the left of the target
+    public typealias Comparate1 = ((Element, Int) -> ComparisonResult)
 
     /// Bubble sort implementation. Bubble Sort is the simplest sorting algorithm that works by repeatedly swapping the adjacent elements if they are in wrong order.
     ///
@@ -123,10 +134,49 @@ extension Array {
 
     // MARK: -
 
-    /// TODO. Binary Insertion sort implementation. Similar to Insertion Sort except it uses a binary search instead of a linear search algorithm for calculating index of each element.
-    public mutating func sortBinaryInsertion(by compare: Comparator) {
-        // TODO: implement this when binary search algorithm is implemented.
-        sortInsertion(by: compare)
+    /// Binary Insertion sort implementation. Similar to Insertion Sort except it uses a binary search instead of a linear search algorithm for calculating index of each element.
+    /// - Complexity: Time complexity worst case O(*n*^2).
+    public mutating func sortBinaryInsertion(by compare: Comparator2) {
+        if count < 2 {
+            return
+        }
+
+        for i in 1..<self.count {
+            var lower = 0
+            var upper = i - 1
+
+            // Binary search
+            print(self)
+            print("lower:\(lower) upper:\(upper)")
+            let newIndex = __searchBinary(lowerIndex: &lower, upperIndex: &upper) { (element, index) in
+                let res1 = compare(self[i], element)
+                if index == 0 {
+                    if res1 == .orderedSame || res1 == .orderedAscending {
+                        return .orderedSame
+                    }
+                    return res1
+                }
+                let res2 = compare(self[index - 1], self[i])
+                if res2 == .orderedSame {
+                    return .orderedSame
+                }
+                if res1 == .orderedAscending && res2 == .orderedAscending {
+                    return .orderedSame
+                }
+                return res1
+            }
+
+            print("newIndex:\(newIndex == nil ? "nil" : newIndex!.description)")
+            if newIndex != nil && newIndex != i {
+                // I wish there was better performant way of doing this in swift.
+                // I think remove might release some storage and insert will allocate it again.
+                insert(remove(at: i), at: newIndex!)
+            }
+            #if DEBUG
+            // print self after each pass
+            print(self)
+            #endif
+        }
     }
 
     // MARK: -
@@ -267,6 +317,14 @@ extension Array where Element: Comparable {
 
     public mutating func sortMerge() {
         sortMerge(by: <)
+    }
+
+    public mutating func sortInsertion() {
+        sortInsertion(by: <)
+    }
+
+    public mutating func sortBinaryInsertion() {
+        sortBinaryInsertion { return $0 == $1 ? .orderedSame : $0 < $1 ? .orderedAscending : .orderedDescending }
     }
 
     public mutating func sortQuick() {

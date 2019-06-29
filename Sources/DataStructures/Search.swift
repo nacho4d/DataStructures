@@ -9,10 +9,6 @@ import Foundation
 
 extension Array {
 
-    /// Search Predicate block.
-    /// - Returns: Zero when element is found. Positive when target is possibly at the right of the element. And negative when target is possibly at the left of the target
-    public typealias SearchPredicate = ((Element) -> Int)
-
     /// Linear search. assumes array is sorted. It sequentially checks each element of the list until a match is found or the whole list has been searched.
     ///
     /// Usage: In below example index is 1
@@ -22,13 +18,13 @@ extension Array {
     /// - Returns: Index of found element. If not found then it returns nil
     /// - Complexity: Time complexity worst and average case O(*n*), best case O(1). Space complexity: O(1)
     ///
-    public func searchLinear(predicate: SearchPredicate) -> Int? {
+    public func searchLinear(predicate: Comparate1) -> Int? {
         for (index, element) in self.enumerated() {
-            let res = predicate(element)
-            if res == 0 {
+            let res = predicate(element, index)
+            if res == .orderedSame {
                 return index
             }
-            if res < 1 {
+            if res == .orderedAscending {
                 return nil
             }
         }
@@ -43,25 +39,31 @@ extension Array {
     ///
     /// - Returns: Index of found element. If not found then it returns nil
     /// - Complexity: Time complexity worst and average case O(log *n*), best case O(1). Space complexity: O(1)
-    public func searchBinary(predicate: SearchPredicate) -> Int? {
+    public func searchBinary(predicate: Comparate1) -> Int? {
         if isEmpty {
             return nil
         }
         var lowerIndex = 0
         var upperIndex = count - 1
+        return __searchBinary(lowerIndex: &lowerIndex, upperIndex: &upperIndex, predicate: predicate)
+    }
+
+    func __searchBinary(lowerIndex: inout Int, upperIndex: inout Int, predicate: Comparate1) -> Int? {
         while true {
             let currentIndex = (lowerIndex + upperIndex)/2
-            let res = predicate(self[currentIndex])
-            if res == 0 {
+            let res = predicate(self[currentIndex], currentIndex)
+            if res == .orderedSame {
                 return currentIndex
-            } else if lowerIndex > upperIndex {
-                return nil
             }
-            if res < 0 {
+            if res == .orderedAscending {
                 upperIndex = currentIndex - 1
             } else {
                 lowerIndex = currentIndex + 1
             }
+            if lowerIndex > upperIndex {
+                return nil
+            }
+
         }
     }
 }

@@ -25,7 +25,7 @@ Open package in Xcode 11 or higher and develop as usual.
 - Add list property to LinkedListNode as C# implementation. It should help avoid infinite, loops and other weird cases. (Two lists with the same node, etc)
 - Improve documentation specially in sort methods. Mention Order/Space Complexity, better, worst, average case too.
 - Implement more tests
-- Add Insert Sort and others?
+- Add more sort methods; Heap Sort, Binary ...?
 - Add More graph theory structures
 - Add more search methods (linear and binary search, Breadth First Search (BFS), depth First Search (DFS) )
 - Implement much more stuff from ["Top Algorithms/Data Structures/Concepts every computer science student should know"](https://link.medium.com/i99SUWm4GX)
