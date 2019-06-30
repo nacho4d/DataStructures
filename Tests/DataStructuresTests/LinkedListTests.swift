@@ -159,6 +159,7 @@ final class LinkedListTests: XCTestCase {
     static var allTests = [
         ("testBasics", testBasics),
         ("testFindBackwards", testFindBackwards),
-        ("testInitWithIterable", testInitWithIterable)
+        ("testInitWithIterable", testInitWithIterable),
+        ("testInitWithLinkedNode", testInitWithLinkedNode),
     ]
 }

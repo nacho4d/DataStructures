@@ -59,5 +59,6 @@ final class StackTests: XCTestCase {
 
     static var allTests = [
         ("testBasics", testBasics),
+        ("testInitWithSequence", testInitWithSequence),
     ]
 }
