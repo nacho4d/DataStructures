@@ -138,14 +138,27 @@ final class LinkedListTests: XCTestCase {
         assertList(list, [0, 1, 5])
         XCTAssertTrue(list.contains(1))
         XCTAssertFalse(list.contains(99))
+
+        let five = try XCTUnwrap(list.findFirst(5))
+        XCTAssertEqual(five.value, 5)
+        XCTAssertTrue(list.contains(node: five))
     }
 
     func testInitWithIterable() throws {
+        let list = LinkedList(sequence: [1, 2, 3, 4, 5])
+        assertList(list, [1, 2, 3, 4, 5])
+    }
 
+    func testInitWithLinkedNode() throws {
+        let list = LinkedList(sequence: [1, 2, 3, 4, 5])
+        assertList(list, [1, 2, 3, 4, 5])
+        let list2 = LinkedList(head: list.first!)
+        assertList(list2, [1, 2, 3, 4, 5])
     }
 
     static var allTests = [
         ("testBasics", testBasics),
-        ("testFindBackwards", testFindBackwards)
+        ("testFindBackwards", testFindBackwards),
+        ("testInitWithIterable", testInitWithIterable)
     ]
 }

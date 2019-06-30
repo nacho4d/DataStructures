@@ -39,25 +39,17 @@ public class LinkedListNode <T>: CustomDebugStringConvertible {
         }
         return desc
     }
-    #if DEBUG
-    func countNodes() -> Int {
-        var res = 0
-        var cur: LinkedListNode<T>? = self
-        while cur != nil {
-            cur = cur?.next
-            res += 1
-        }
-        return res
-    }
-    
-    func findLast() -> LinkedListNode<T> {
+
+    /// Internal method. Count all subnodes and return last node (could be self)
+    func countNodesAndFindLast() -> (Int, LinkedListNode<T>) {
+        var res = 1
         var cur: LinkedListNode<T> = self
         while cur.next != nil {
             cur = cur.next!
+            res += 1
         }
-        return cur
+        return (res, cur)
     }
-    #endif
 }
 
 /// Linked List implementation. Represents a doubly linked list.
@@ -92,8 +84,12 @@ public class LinkedList<T>: CustomDebugStringConvertible {
     /// Designated initializer. Creates a new instance of a list. If `head` is given it will be the head.
     public init(head: LinkedListNode<T>? = nil) {
         first = head
-        count = first?.countNodes() ?? 0
-        last = first?.findLast()
+        if let f = first {
+            (count, last) = f.countNodesAndFindLast()
+        } else {
+            count = 0
+            last = first
+        }
     }
 
     public init<S: Sequence>(sequence: S) where S.Element == T {
@@ -206,32 +202,32 @@ public class LinkedList<T>: CustomDebugStringConvertible {
         count = 0
     }
 
-    /// Search self for insertion position of given linked node and inserts it.
-    /// - Parameters
-    ///  - node: A linked node to insert.
-    func insert(_ node: LinkedListNode<T>, evaluate: ((T) -> Bool)) {
-        // search position
-        var cur: LinkedListNode<T>? = first
-        while cur != nil && !evaluate(cur!.value) {
-            cur = cur?.next
-        }
-        // insert
-        node.next = cur?.next
-        cur?.next = node
-        if first == nil {
-            first = node
-        }
-        count += 1
-    }
-
-    /// Same as insert(_ node: LinkedNode)
-    func insert(nodeWithValue value: T, evaluate: ((T) -> Bool)) {
-        insert(LinkedListNode(value), evaluate: evaluate)
-    }
+//    /// Search self for insertion position of given linked node and inserts it. This method has been removed. Please use `findFirst()` or `findLast()` to find insert position  and then `insert(_:before:)` or `insert(_:after:)`to really insert it.
+//    /// - Parameters
+//    ///  - node: A linked node to insert.
+//    func insert(_ node: LinkedListNode<T>, evaluate: ((T) -> Bool)) {
+//        // search position
+//        var cur: LinkedListNode<T>? = first
+//        while cur != nil && !evaluate(cur!.value) {
+//            cur = cur?.next
+//        }
+//        // insert
+//        node.next = cur?.next
+//        cur?.next = node
+//        if first == nil {
+//            first = node
+//        }
+//        count += 1
+//    }
+//
+//    /// Same as insert(_ node: LinkedNode). This method has been removed. Please use `findFirst()` or `findLast()` to find insert position  and then `insert(_:before:)` or `insert(_:after:)`to really insert it.
+//    func insert(nodeWithValue value: T, evaluate: ((T) -> Bool)) {
+//        insert(LinkedListNode(value), evaluate: evaluate)
+//    }
 
     /// Searchs value and return yes if found otherwise no.
     /// - Complexity: O(*n*), where *n* is the length of the collection.
-    public func contains(node: LinkedList<T>) -> Bool {
+    public func contains(node: LinkedListNode<T>) -> Bool {
         var cur: LinkedListNode<T>? = first
         while cur != nil && cur !== node {
             cur = cur?.next

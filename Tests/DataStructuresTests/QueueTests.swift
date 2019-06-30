@@ -54,7 +54,17 @@ final class QueueTests: XCTestCase {
         XCTAssertEqual(queue.count, 0)
     }
 
+    func testInitWithSequence() throws {
+        let queue = Queue(sequence: [1, 3, 5, 7])
+        XCTAssertEqual(queue.dequeue(), 1)
+        XCTAssertEqual(queue.dequeue(), 3)
+        XCTAssertEqual(queue.dequeue(), 5)
+        XCTAssertEqual(queue.dequeue(), 7)
+        XCTAssertNil(queue.dequeue())
+    }
+
     static var allTests = [
         ("testBasics", testBasics),
+        ("testInitWithSequence", testInitWithSequence),
     ]
 }

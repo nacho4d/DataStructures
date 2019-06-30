@@ -48,6 +48,15 @@ final class StackTests: XCTestCase {
         XCTAssertEqual(stack.count, 0)
     }
 
+    func testInitWithSequence() throws {
+        let stack = Stack(sequence: [1, 3, 5, 7])
+        XCTAssertEqual(stack.pop(), 7)
+        XCTAssertEqual(stack.pop(), 5)
+        XCTAssertEqual(stack.pop(), 3)
+        XCTAssertEqual(stack.pop(), 1)
+        XCTAssertNil(stack.pop())
+    }
+
     static var allTests = [
         ("testBasics", testBasics),
     ]

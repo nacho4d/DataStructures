@@ -32,9 +32,8 @@ public struct Queue<T> {
         if let f = storage.first {
             storage.remove(node: f)
             return f.value
-        } else {
-            return nil
         }
+        return nil
     }
 
     /// Adds an object to the end of the Queue.

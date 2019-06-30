@@ -49,11 +49,13 @@ extension Array {
     }
 
     func __searchBinary(lowerIndex: inout Int, upperIndex: inout Int, predicate: Comparate1) -> Int? {
+        var foundIndex: Int? = nil
         while true {
             let currentIndex = (lowerIndex + upperIndex)/2
             let res = predicate(self[currentIndex], currentIndex)
             if res == .orderedSame {
-                return currentIndex
+                foundIndex = currentIndex
+                break
             }
             if res == .orderedAscending {
                 upperIndex = currentIndex - 1
@@ -61,9 +63,10 @@ extension Array {
                 lowerIndex = currentIndex + 1
             }
             if lowerIndex > upperIndex {
-                return nil
+                foundIndex = nil
+                break
             }
-
         }
+        return foundIndex
     }
 }

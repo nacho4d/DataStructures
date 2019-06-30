@@ -27,6 +27,10 @@ final class SortTests: XCTestCase {
         array = [5, 1, 4, 2, 8]
         array.sortBubble(by: <)
         XCTAssertEqual(array, [1, 2, 4, 5, 8])
+
+        array = [5, 1, 4, 2, 8]
+        array.sortBubble()
+        XCTAssertEqual(array, [1, 2, 4, 5, 8])
     }
 
     func testButtleSortBestCase() {
@@ -54,6 +58,10 @@ final class SortTests: XCTestCase {
 
         array = [5, 1, 4, 2, 8]
         array.sortInsertion(by: <)
+        XCTAssertEqual(array, [1, 2, 4, 5, 8])
+
+        array = [5, 1, 4, 2, 8]
+        array.sortInsertion()
         XCTAssertEqual(array, [1, 2, 4, 5, 8])
     }
 
@@ -83,6 +91,14 @@ final class SortTests: XCTestCase {
         array = [5, 1, 4, 2, 8]
         array.sortBinaryInsertion { return ComparisonResult($0 - $1) }
         XCTAssertEqual(array, [1, 2, 4, 5, 8])
+
+        array = [5, 1, 4, 2, 8]
+        array.sortBinaryInsertion()
+        XCTAssertEqual(array, [1, 2, 4, 5, 8])
+
+        array = [5, 1, 4, 2, 4, 8]
+        array.sortBinaryInsertion()
+        XCTAssertEqual(array, [1, 2, 4, 4, 5, 8])
     }
 
     func testBinaryInsertionSortBestCase() {
@@ -111,6 +127,10 @@ final class SortTests: XCTestCase {
         array = [5, 1, 4, 2, 8]
         array.sortQuick(by: <)
         XCTAssertEqual(array, [1, 2, 4, 5, 8])
+
+        array = [5, 1, 4, 2, 8]
+        array.sortQuick()
+        XCTAssertEqual(array, [1, 2, 4, 5, 8])
     }
 
     func testQuickSortLargeCase() {
@@ -130,6 +150,10 @@ final class SortTests: XCTestCase {
 
         array = [5, 1, 4, 2, 8]
         array.sortMerge(by: <)
+        XCTAssertEqual(array, [1, 2, 4, 5, 8])
+
+        array = [5, 1, 4, 2, 8]
+        array.sortMerge()
         XCTAssertEqual(array, [1, 2, 4, 5, 8])
     }
 
