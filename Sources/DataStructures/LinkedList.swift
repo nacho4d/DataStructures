@@ -5,7 +5,7 @@
 //  Created by Guillermo Ignacio Enriquez Gutierrez on 2019/06/24.
 //
 
-/// Node implementation for two way linked list. Container for objects of type T.
+/// Node implementation for two way linked list. Container for objects of type T. (Based on C# .Net Implementation)
 public class LinkedListNode <T>: CustomDebugStringConvertible {
 
     /// Value contained in this node

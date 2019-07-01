@@ -5,7 +5,7 @@
 //  Created by Guillermo Ignacio Enriquez Gutierrez on 2019/06/24.
 //
 
-/// Stack implementation. Represents a simple last-in-first-out (LIFO) collection of objects.
+/// Stack implementation. Represents a simple last-in-first-out (LIFO) collection of objects. (Based on C# .Net Implementation)
 public struct Stack<T> {
 
     /// Internal storage.

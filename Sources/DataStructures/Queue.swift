@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// Queue implementation. Represents a first-in, first-out (FIFO) collection of objects.
+/// Queue implementation. Represents a first-in, first-out (FIFO) collection of objects. (Based on C# .Net Implementation)
 public struct Queue<T> {
 
     /// Internal storage.
