@@ -12,7 +12,7 @@ import XCTest
 final class PriorityQueueTests: XCTestCase {
 
     override func setUp() {
-        continueAfterFailure = false
+        continueAfterFailure = true
         super.setUp()
     }
 
@@ -43,6 +43,7 @@ final class PriorityQueueTests: XCTestCase {
         //XCTAssertEqual(queue.queue, [1, 3, 5, 4, 8, 7, 6])
         XCTAssertEqual(queue.queue, [1, 3, 5, 8, 4, 7, 6])
 
+        XCTAssertEqual(queue.peek(), 1)
         XCTAssertEqual(queue.poll(), 1)
         XCTAssertEqual(queue.count, 6)
 
@@ -53,16 +54,73 @@ final class PriorityQueueTests: XCTestCase {
     }
 
     func testInitWithSequence() throws {
-//        let queue = Queue(sequence: [1, 3, 5, 7])
-//        XCTAssertEqual(queue.dequeue(), 1)
-//        XCTAssertEqual(queue.dequeue(), 3)
-//        XCTAssertEqual(queue.dequeue(), 5)
-//        XCTAssertEqual(queue.dequeue(), 7)
-//        XCTAssertNil(queue.dequeue())
+        let queue = PriorityQueue<Int>(sequence: [7, 8, 4, 5, 6, 1, 3])
+        queue.reserveCapacity(11)
+        XCTAssertEqual(queue.poll(), 1)
+        XCTAssertEqual(queue.poll(), 3)
+        XCTAssertEqual(queue.poll(), 4)
+        XCTAssertEqual(queue.poll(), 5)
+        XCTAssertEqual(queue.poll(), 6)
+        XCTAssertEqual(queue.poll(), 7)
+        XCTAssertEqual(queue.poll(), 8)
+        XCTAssertNil(queue.poll())
+
+    }
+
+    func testIntenalSiftDown() throws {
+        let queue = PriorityQueue<Int>(sequence: [1, 3, 4, 5, 6, 7, 8])
+        // Test array is correctly modified
+        XCTAssertEqual(queue.queue, [1, 3, 4, 5, 6, 7, 8])
+        XCTAssertEqual(queue.poll(), 1)
+        XCTAssertEqual(queue.queue, [3, 5, 4, 8, 6, 7])
+        XCTAssertEqual(queue.poll(), 3)
+        XCTAssertEqual(queue.queue, [4, 5, 7, 8, 6])
+        XCTAssertEqual(queue.poll(), 4)
+        XCTAssertEqual(queue.queue, [5, 6, 7, 8])
+        XCTAssertEqual(queue.poll(), 5)
+        XCTAssertEqual(queue.queue, [6, 8, 7])
+        XCTAssertEqual(queue.poll(), 6)
+        XCTAssertEqual(queue.queue, [7, 8])
+        XCTAssertEqual(queue.poll(), 7)
+        XCTAssertEqual(queue.queue, [8])
+        XCTAssertEqual(queue.poll(), 8)
+        XCTAssertEqual(queue.queue, [])
+        // Test no crash even on bad usage
+        queue.siftDown(index: 0)
+        XCTAssertEqual(queue.queue, [])
+    }
+
+    func testIntenalSiftUp() throws {
+        let queue = PriorityQueue<Int>()
+        XCTAssertEqual(queue.queue, [])
+        // Test no crash even on bad usage
+        queue.siftUp(index: -1)
+        XCTAssertEqual(queue.queue, [])
+        // Test array is correctly modified
+        queue.insert(7)
+        XCTAssertEqual(queue.queue, [7])
+        queue.insert(8)
+        XCTAssertEqual(queue.queue, [7, 8])
+        queue.insert(4)
+        XCTAssertEqual(queue.queue, [4, 8, 7])
+        queue.insert(5)
+        XCTAssertEqual(queue.queue, [4, 5, 7, 8])
+        queue.insert(6)
+        XCTAssertEqual(queue.queue, [4, 5, 7, 8, 6])
+        queue.insert(1)
+        XCTAssertEqual(queue.queue, [1, 5, 4, 8, 6, 7])
+        queue.insert(3)
+        XCTAssertEqual(queue.queue, [1, 5, 3, 8, 6, 7, 4])
+
+        let queue2 = PriorityQueue(sequence: [4, 8, 9])
+        XCTAssertEqual(queue2.poll(), 4)
+        XCTAssertEqual(queue2.queue, [8, 9])
     }
 
     static var allTests = [
         ("testBasics", testBasics),
         ("testInitWithSequence", testInitWithSequence),
+        ("testIntenalSiftDown", testIntenalSiftDown),
+        ("testIntenalSiftUp", testIntenalSiftUp),
     ]
 }

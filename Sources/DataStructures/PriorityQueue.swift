@@ -27,6 +27,13 @@ public class PriorityQueue<T> {
         self.comparator = comparator
     }
 
+    public init<S: Sequence>(comparator: @escaping Comparator, sequence: S) where S.Element == T {
+        self.comparator = comparator
+        for elem in sequence {
+            insert(elem)
+        }
+    }
+
     /// Reserves enough space to store the specified number of elements.
     ///
     /// - Parameter minimumCapacity: The requested number of elements to store.
@@ -57,8 +64,8 @@ public class PriorityQueue<T> {
         let res = queue[0]
         queue[0] = queue[i]
         queue.removeLast()
-        siftDown(index: 0)
         count -= 1
+        siftDown(index: 0)
         return res
     }
 
@@ -70,69 +77,65 @@ public class PriorityQueue<T> {
             return
         }
         queue.append(element)
-        siftUp(index: count)
         count += 1
+        siftUp(index: count - 1)
     }
 
-    /// Re-arrange queue to element at `index` to ensure it is smallest. Usually used after removing the smallest
+    /// *Internal* Re-arrange queue to element at `index` to ensure it is smallest. Usually used after removing the smallest
     internal func siftDown(index: Int) {
         if index >= count {
             return
         }
+        let index1 = (index << 1) + 1 // index * 2 + 1
+        let index2 = (index << 1) + 2 // index * 2 + 1
         let i = queue[index]
-        // Compare two both children
-        if (index * 2 + 2) > count {
-            let n1 = queue[index * 2 + 1]
-            let n2 = queue[index * 2 + 2]
-            let n1i = comparator(n1, i)
-            let n2i = comparator(n2, i)
+        // There are two children
+        if index2 < count {
+            let n1 = queue[index1]
+            let n2 = queue[index2]
+            let n1i = comparator(i, n1)
+            let n2i = comparator(i, n2)
             if n1i == .orderedDescending && n2i == .orderedDescending {
                 // swap to smallest
-                if comparator(n1, n2) == .orderedAscending {
-                    // swap with n1
-                    queue.swapAt(index, index * 2 + 1)
-                    siftDown(index: index * 2 + 1)
-                    return
+                if comparator(n1, n2) == .orderedDescending {
+                    // swap with right child
+                    queue.swapAt(index, index2)
+                    siftDown(index: index2)
                 } else {
-                    // swap with n2
-                    siftDown(index: index * 2 + 2)
-                    siftDown(index: index * 2 + 2)
+                    // swap with left child
+                    queue.swapAt(index, index1)
+                    siftDown(index: index1)
                 }
-                return
+            } else if n1i == .orderedDescending {
+                // swap with left child
+                queue.swapAt(index, index1)
+                siftDown(index: index1)
+            } else if n2i == .orderedDescending {
+                // swap with right child
+                queue.swapAt(index, index2)
+                siftDown(index: index2)
             }
-            if n1i == .orderedDescending {
-                // swap with n1
-                queue.swapAt(index, index * 2 + 1)
-                siftDown(index: index * 2 + 1)
-                return
-            }
-            if n2i == .orderedDescending {
-                // swap with n2
-                siftDown(index: index * 2 + 2)
-                siftDown(index: index * 2 + 2)
-                return
-            }
+            return
         }
-        // Compare to only one child
-        if (index * 2 + 1) > count {
-            let n1 = queue[index * 2 + 1]
-            let n1i = comparator(n1, i)
+        // There is only one child
+        if index1 < count {
+            let n1 = queue[index1]
+            let n1i = comparator(i, n1)
             if n1i == .orderedDescending {
-                // swap with n1
-                queue.swapAt(index, index * 2 + 1)
-                siftDown(index: index * 2 + 1)
-                return
+                // swap with  left child
+                queue.swapAt(index, index1)
+                siftDown(index: index1)
             }
         }
     }
 
-    /// Re-arrange queue to element at `index`to ensure it is parent/ancestors are not bigger. Usually used after adding elements to queue
+    /// *Internal* Re-arrange queue to element at `index`to ensure it is parent/ancestors are not bigger. Usually used after adding elements to queue
     internal func siftUp(index: Int) {
         if index < 0 {
             return
         }
         let i = queue[index]
-        let pIndex = (index - 1) / 2 // TODO: Can we do as java/c `(index - 1) >>> 1`?
+        let pIndex = (index - 1) >> 1 //  (index - 1) * 2
         if pIndex < 0 {
             return
         }
@@ -151,5 +154,11 @@ extension PriorityQueue where T: Comparable {
         self.init(comparator: { lhs , rhs -> ComparisonResult in
             return lhs < rhs ? .orderedAscending: lhs > rhs ? .orderedDescending : .orderedSame
         })
+    }
+
+    public convenience init<S: Sequence> (sequence: S) where S.Element == T {
+        self.init(comparator: { lhs , rhs -> ComparisonResult in
+            return lhs < rhs ? .orderedAscending: lhs > rhs ? .orderedDescending : .orderedSame
+        }, sequence: sequence)
     }
 }
