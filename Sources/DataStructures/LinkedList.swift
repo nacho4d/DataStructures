@@ -9,13 +9,13 @@
 public class LinkedListNode <T>: CustomDebugStringConvertible {
 
     /// Value contained in this node
-    public var value: T
+    public internal(set) var value: T
 
     /// Strong reference to next element
-    public var next: LinkedListNode<T>?
+    public internal(set) var next: LinkedListNode<T>?
 
     /// Weak reference to prev element
-    public weak var prev: LinkedListNode<T>?
+    public internal(set) weak var prev: LinkedListNode<T>?
 
     /// Designated initializer. Nodes are created internally by LinkedList objects.
     internal init(_ value: T) {
