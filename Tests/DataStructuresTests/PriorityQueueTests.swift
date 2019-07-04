@@ -67,7 +67,7 @@ final class PriorityQueueTests: XCTestCase {
 
     }
 
-    func testIntenalSiftDown() throws {
+    func testSiftDown() throws {
         let queue = PriorityQueue<Int>(sequence: [1, 3, 4, 5, 6, 7, 8])
         // Test array is correctly modified
         XCTAssertEqual(queue.queue, [1, 3, 4, 5, 6, 7, 8])
@@ -86,15 +86,22 @@ final class PriorityQueueTests: XCTestCase {
         XCTAssertEqual(queue.poll(), 8)
         XCTAssertEqual(queue.queue, [])
         // Test no crash even on bad usage
-        queue.siftDown(index: 0)
+        queue.queue.siftDown(index: 0, count: queue.count, comparator: queue.comparator)
         XCTAssertEqual(queue.queue, [])
     }
 
-    func testIntenalSiftUp() throws {
+    func testSiftDownBounds() throws {
+        var arr = [1, 4, 5, 2, 3, 6, 7]
+        let comparator: PriorityQueue<Int>.Comparator = { return ComparisonResult($1 - $0) }
+        arr.siftDown(index: 0, count: 5, comparator: comparator)
+        XCTAssertEqual(arr, [5, 4, 1, 2, 3, 6, 7])
+    }
+
+    func testSiftUp() throws {
         let queue = PriorityQueue<Int>()
         XCTAssertEqual(queue.queue, [])
         // Test no crash even on bad usage
-        queue.siftUp(index: -1)
+        queue.queue.siftUp(index: -1, comparator: queue.comparator)
         XCTAssertEqual(queue.queue, [])
         // Test array is correctly modified
         queue.insert(7)
@@ -117,10 +124,19 @@ final class PriorityQueueTests: XCTestCase {
         XCTAssertEqual(queue2.queue, [8, 9])
     }
 
+    func testSiftUpBounds() throws {
+        var arr = [5, 4, 1, 2, 3, 6, 7]
+        let comparator: PriorityQueue<Int>.Comparator = { return ComparisonResult($1 - $0) }
+        arr.siftUp(index: 5, comparator: comparator)
+        XCTAssertEqual(arr, [6, 4, 5, 2, 3, 1, 7])
+    }
+
     static var allTests = [
         ("testBasics", testBasics),
         ("testInitWithSequence", testInitWithSequence),
-        ("testIntenalSiftDown", testIntenalSiftDown),
-        ("testIntenalSiftUp", testIntenalSiftUp),
+        ("testSiftDown", testSiftDown),
+        ("testSiftDownBounds", testSiftDownBounds),
+        ("testSiftUp", testSiftUp),
+        ("testSiftUpBounds", testSiftUpBounds),
     ]
 }

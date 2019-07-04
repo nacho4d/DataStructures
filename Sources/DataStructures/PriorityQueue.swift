@@ -21,12 +21,14 @@ public class PriorityQueue<T> {
     public typealias Comparator = (T, T) -> ComparisonResult
 
     /// The comparator, function to determinate order of elements
-    var comparator: Comparator
+    public internal(set) var comparator: Comparator
 
+    /// Designated initializator. Initialize queue with given comparator
     public init(comparator: @escaping Comparator) {
         self.comparator = comparator
     }
 
+    /// Designated initializator. Initialize queue with given comparator and start it with given sequence
     public init<S: Sequence>(comparator: @escaping Comparator, sequence: S) where S.Element == T {
         self.comparator = comparator
         for elem in sequence {
@@ -65,84 +67,90 @@ public class PriorityQueue<T> {
         queue[0] = queue[i]
         queue.removeLast()
         count -= 1
-        siftDown(index: 0)
+        queue.siftDown(index: 0, count: count, comparator: comparator)
         return res
     }
 
     /// Inserts the specified element into this priority queue.
     public func insert(_ element: T) {
-        if count == 0 {
-            queue.append(element)
-            count = 1
-            return
-        }
-        queue.append(element)
+        // Do not use `queue.append(element)` so this function can be used for in-place sorting
+        queue.insert(element, at: count)
         count += 1
-        siftUp(index: count - 1)
+        queue.siftUp(index: count - 1, comparator: comparator)
     }
+}
 
-    /// *Internal* Re-arrange queue to element at `index` to ensure it is smallest. Usually used after removing the smallest
-    internal func siftDown(index: Int) {
+extension Array {
+    /// *[Internal]* Re-arrange queue. Starting with element at `index` and recursively its children nodes to ensure relation given by `comparator` is always meet. Used after removing elements from queue.
+    /// - Parameters:
+    ///     - index: start index. Function will recursively look at children nodes too.
+    ///     - count: length of array. Usually this will be the Array.count however when using in-place heap sort it is used to constrain sift operation to some range.
+    /// - Complexity: O(log *n*) where *n* is the length of the array (in this case it would be parameter `count` because array might be constrained)
+    internal mutating func siftDown(index: Int, count: Index, comparator: PriorityQueue<Element>.Comparator) {
         if index >= count {
             return
         }
         let index1 = (index << 1) + 1 // index * 2 + 1
         let index2 = (index << 1) + 2 // index * 2 + 1
-        let i = queue[index]
+        let i = self[index]
         // There are two children
         if index2 < count {
-            let n1 = queue[index1]
-            let n2 = queue[index2]
+            let n1 = self[index1]
+            let n2 = self[index2]
             let n1i = comparator(i, n1)
             let n2i = comparator(i, n2)
             if n1i == .orderedDescending && n2i == .orderedDescending {
                 // swap to smallest
                 if comparator(n1, n2) == .orderedDescending {
                     // swap with right child
-                    queue.swapAt(index, index2)
-                    siftDown(index: index2)
+                    self.swapAt(index, index2)
+                    siftDown(index: index2, count: count, comparator: comparator)
                 } else {
                     // swap with left child
-                    queue.swapAt(index, index1)
-                    siftDown(index: index1)
+                    self.swapAt(index, index1)
+                    siftDown(index: index1, count: count, comparator: comparator)
                 }
             } else if n1i == .orderedDescending {
                 // swap with left child
-                queue.swapAt(index, index1)
-                siftDown(index: index1)
+                self.swapAt(index, index1)
+                siftDown(index: index1, count: count, comparator: comparator)
             } else if n2i == .orderedDescending {
                 // swap with right child
-                queue.swapAt(index, index2)
-                siftDown(index: index2)
+                self.swapAt(index, index2)
+                siftDown(index: index2, count: count, comparator: comparator)
             }
             return
         }
         // There is only one child
         if index1 < count {
-            let n1 = queue[index1]
+            let n1 = self[index1]
             let n1i = comparator(i, n1)
             if n1i == .orderedDescending {
                 // swap with  left child
-                queue.swapAt(index, index1)
-                siftDown(index: index1)
+                self.swapAt(index, index1)
+                siftDown(index: index1, count: count, comparator: comparator)
             }
         }
     }
 
-    /// *Internal* Re-arrange queue to element at `index`to ensure it is parent/ancestors are not bigger. Usually used after adding elements to queue
-    internal func siftUp(index: Int) {
+    /// *[Internal]* Re-arrange queue starting with element at `index`and recursively do its parents/ancestors too to ensure relation given by `comparator`is always meet. Used after adding elements to queue
+    /// - Parameters:
+    ///   - index: start index. Function will recursively look at parent/ancestor nodes too.
+    ///   - comparator: comparator, function to determinate order of elements. Default implementation uses a min heap so comparator result is inverted.
+    /// - Complexity: O(log *n*) where *n* is the length of the array.
+    internal mutating func siftUp(index: Int, comparator: PriorityQueue<Element>.Comparator) {
         if index < 0 {
             return
         }
-        let i = queue[index]
         let pIndex = (index - 1) >> 1 //  (index - 1) * 2
         if pIndex < 0 {
             return
         }
-        let p = queue[pIndex]
+        let i = self[index]
+        let p = self[pIndex]
         if comparator(p, i) == .orderedDescending {
-            queue.swapAt(index, pIndex)
-            siftUp(index: pIndex)
+            self.swapAt(index, pIndex)
+            siftUp(index: pIndex, comparator: comparator)
             return
         }
     }
