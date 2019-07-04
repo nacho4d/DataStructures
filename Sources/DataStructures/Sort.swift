@@ -336,26 +336,39 @@ extension Array {
 
 extension Array where Element: Comparable {
 
+    /// Bubble sort implementation with default comparator `<`. Convenience method
+    /// - Note: Available when `T` conforms to `Comparable`
     public mutating func sortBubble() {
         sortBubble(by: <)
     }
 
+    /// Merge sort implementation with default comparator `<`. Convenience method
+    /// - Note: Available when `T` conforms to `Comparable`
     public mutating func sortMerge() {
         sortMerge(by: <)
     }
 
+    /// Insertion sort implementation with default comparator `<`. Convenience method
+    /// - Note: Available when `T` conforms to `Comparable`
     public mutating func sortInsertion() {
         sortInsertion(by: <)
     }
 
+    /// Binary Insertion sort implementation with default comparator `<`. Convenience method
+    /// - Note: Available when `T` conforms to `Comparable`
     public mutating func sortBinaryInsertion() {
         sortBinaryInsertion { return $0 == $1 ? .orderedSame : $0 < $1 ? .orderedAscending : .orderedDescending }
     }
 
+    // FIXME: This documentation makes jazzy crash?
+    // Quick sort implementation with default comparator `<`. Convenience method
+    // - Note: Available when `T` conforms to `Comparable`
     public mutating func sortQuick() {
         sortQuick(by: <)
     }
 
+    /// Heap sort implementation with default comparator using `<` and `>`. Convenience method
+    /// - Note: Available when `T` conforms to `Comparable`
     public mutating func sortHeap() {
         sortHeap { return $0 > $1 ? .orderedDescending : $0 < $1 ? .orderedAscending : .orderedSame }
     }

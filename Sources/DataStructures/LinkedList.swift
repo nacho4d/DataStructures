@@ -92,6 +92,9 @@ public class LinkedList<T>: CustomDebugStringConvertible {
         }
     }
 
+    /// Designated initializer. Creates a new instance of a list and add elements from `sequence`.
+    /// - Parameters:
+    ///   - sequence: sequence containing elements to add to linked list.
     public init<S: Sequence>(sequence: S) where S.Element == T {
         first = nil
         count = 0

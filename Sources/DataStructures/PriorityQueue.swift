@@ -28,7 +28,9 @@ public class PriorityQueue<T> {
         self.comparator = comparator
     }
 
-    /// Designated initializator. Initialize queue with given comparator and start it with given sequence
+    /// Designated initializator. Initialize queue with given comparator and add elements from given `sequence`
+    /// - Parameters:
+    ///   - sequence: sequence containing elements to add to queue.
     public init<S: Sequence>(comparator: @escaping Comparator, sequence: S) where S.Element == T {
         self.comparator = comparator
         for elem in sequence {
@@ -158,12 +160,16 @@ extension Array {
 
 extension PriorityQueue where T: Comparable {
 
+    /// Designated initializator. Initialize queue with a comparator using `<` and `>` operators
+    /// - Note: Available when `T` conforms to `Comparable`
     public convenience init() {
         self.init(comparator: { lhs , rhs -> ComparisonResult in
             return lhs < rhs ? .orderedAscending: lhs > rhs ? .orderedDescending : .orderedSame
         })
     }
 
+    /// Designated initializator. Initialize queue with a comparator using `<` and `>` operators and add elements in given `sequence`
+    /// - Note: Available when `T` conforms to `Comparable`
     public convenience init<S: Sequence> (sequence: S) where S.Element == T {
         self.init(comparator: { lhs , rhs -> ComparisonResult in
             return lhs < rhs ? .orderedAscending: lhs > rhs ? .orderedDescending : .orderedSame

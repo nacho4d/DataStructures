@@ -11,9 +11,13 @@ public struct Stack<T> {
     /// Internal storage.
     let storage = LinkedList<T>()
 
+    /// Designated initializer. Creates a new instance of a stack.
     public init() {
     }
 
+    /// Designated initializer. Creates a new instance of a stack and add elements from `sequence`.
+    /// - Parameters:
+    ///   - sequence: sequence containing elements to add to queue.
     public init<S: Sequence>(sequence: S) where S.Element == T {
         for s in sequence {
             storage.append(s)
