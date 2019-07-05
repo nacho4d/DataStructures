@@ -156,10 +156,44 @@ final class LinkedListTests: XCTestCase {
         assertList(list2, [1, 2, 3, 4, 5])
     }
 
+    func testLinkedListSequenceProtocolAdopt() throws {
+        let list = LinkedList(sequence: [1, 2, 3, 4, 5])
+
+        /// Sequence protocol adoption allows `for in`. Each access complexity is O(1)
+        var arr = [1, 2, 3, 4, 5]
+        for i in list {
+            let expected = arr.remove(at: 0)
+            XCTAssertEqual(i, expected)
+        }
+        /// List should not be modified
+        assertList(list, [1, 2, 3, 4, 5])
+
+        /// Sequence protocol adoption allows `filter`. Each access complexity is O(1)
+        let impars = list.filter { $0 % 2 == 0 }
+        XCTAssertEqual(impars, [2, 4])
+        /// List should not be modified
+        assertList(list, [1, 2, 3, 4, 5])
+
+        /// Sequence protocol adoption allows `enumerated`. Each access complexity is O(1)
+        for (i, e) in list.enumerated() {
+            XCTAssertEqual(e, [1, 2, 3, 4, 5][i])
+        }
+        /// List should not be modified
+        assertList(list, [1, 2, 3, 4, 5])
+
+        /// Sequence protocol adoption allows `reversed` too. Array is copied and reversed at initialization hence time complexity is O(n). Each access time complexity is O(1).
+        for (i, e) in list.reversed().enumerated() {
+            XCTAssertEqual(e, [5, 4, 3, 2, 1][i])
+        }
+        /// List should not be modified
+        assertList(list, [1, 2, 3, 4, 5])
+    }
+
     static var allTests = [
         ("testBasics", testBasics),
         ("testFindBackwards", testFindBackwards),
         ("testInitWithIterable", testInitWithIterable),
         ("testInitWithLinkedNode", testInitWithLinkedNode),
+        ("testLinkedListSequenceProtocolAdopt", testLinkedListSequenceProtocolAdopt)
     ]
 }

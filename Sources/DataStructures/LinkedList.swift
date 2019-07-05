@@ -280,4 +280,29 @@ extension LinkedList where T: Equatable {
         }
         return nil
     }
+
+
+}
+
+/// Sequence protocol adoption. It allows `for ... in` and a bunch of other methods too.
+extension LinkedList: Sequence {
+
+    /// Iterator implementation
+    public class Iterator<T>: IteratorProtocol {
+        var cur: LinkedListNode<T>?
+
+        /// IteratorProtocol protocol requirement
+        public func next() -> T? {
+            let res = cur?.value
+            cur = cur?.next
+            return res
+        }
+    }
+
+    /// Sequence protocol requirement
+    public func makeIterator() -> Iterator<T> {
+        let g = LinkedList.Iterator()
+        g.cur = first
+        return g
+    }
 }
