@@ -1,21 +1,21 @@
 //
-//  LinkedList.swift
+//  DoublyLinkedList.swift
 //
 //
 //  Created by Guillermo Ignacio Enriquez Gutierrez on 2019/06/24.
 //
 
 /// Node implementation for two way linked list. Container for objects of type T. (Based on C# .Net Implementation)
-public class LinkedListNode <T>: CustomDebugStringConvertible {
+public class DoublyLinkedListNode <T>: CustomDebugStringConvertible {
 
     /// Value contained in this node
     public internal(set) var value: T
 
     /// Strong reference to next element
-    public internal(set) var next: LinkedListNode<T>?
+    public internal(set) var next: DoublyLinkedListNode<T>?
 
     /// Weak reference to prev element
-    public internal(set) weak var prev: LinkedListNode<T>?
+    public internal(set) weak var prev: DoublyLinkedListNode<T>?
 
     /// Designated initializer. Nodes are created internally by LinkedList objects.
     internal init(_ value: T) {
@@ -41,9 +41,9 @@ public class LinkedListNode <T>: CustomDebugStringConvertible {
     }
 
     /// Internal method. Count all subnodes and return last node (could be self)
-    func countNodesAndFindLast() -> (Int, LinkedListNode<T>) {
+    func countNodesAndFindLast() -> (Int, DoublyLinkedListNode<T>) {
         var res = 1
-        var cur: LinkedListNode<T> = self
+        var cur: DoublyLinkedListNode<T> = self
         while cur.next != nil {
             cur = cur.next!
             res += 1
@@ -53,13 +53,13 @@ public class LinkedListNode <T>: CustomDebugStringConvertible {
 }
 
 /// Linked List implementation. Represents a doubly linked list.
-public class LinkedList<T>: CustomDebugStringConvertible {
+public class DoublyLinkedList<T>: CustomDebugStringConvertible {
 
     /// First element (head) in the list
-    public var first: LinkedListNode<T>? = nil
+    public var first: DoublyLinkedListNode<T>? = nil
 
     /// Last element (tail) in the list
-    public var last: LinkedListNode<T>? = nil
+    public var last: DoublyLinkedListNode<T>? = nil
 
     /// The number of elements in the list
     public var count = 0
@@ -82,7 +82,7 @@ public class LinkedList<T>: CustomDebugStringConvertible {
     }
 
     /// Designated initializer. Creates a new instance of a list. If `head` is given it will be the head.
-    public init(head: LinkedListNode<T>? = nil) {
+    public init(head: DoublyLinkedListNode<T>? = nil) {
         first = head
         if let f = first {
             (count, last) = f.countNodesAndFindLast()
@@ -107,8 +107,8 @@ public class LinkedList<T>: CustomDebugStringConvertible {
     /// Search node that matches given predicate. Return node if found otherwise nil.
     /// - Parameters
     ///   - predicate: A closure that takes an element of the sequence as its argument and returns a Boolean value indicating whether the element is a match.
-    public func findFirst(where predicate: ((T) -> Bool)) -> LinkedListNode<T>? {
-        var cur: LinkedListNode<T>? = first
+    public func findFirst(where predicate: ((T) -> Bool)) -> DoublyLinkedListNode<T>? {
+        var cur: DoublyLinkedListNode<T>? = first
         while cur != nil && !predicate(cur!.value) {
             cur = cur?.next
         }
@@ -117,8 +117,8 @@ public class LinkedList<T>: CustomDebugStringConvertible {
 
     /// Search node that matches given predicate starting from the end. Return node if found otherwise nil.
     /// - Complexity: O(*n*), where *n* is the length of the collection.
-    public func findLast(where predicate: ((T) -> Bool)) -> LinkedListNode<T>? {
-        var cur: LinkedListNode<T>? = last
+    public func findLast(where predicate: ((T) -> Bool)) -> DoublyLinkedListNode<T>? {
+        var cur: DoublyLinkedListNode<T>? = last
         while cur != nil && !predicate(cur!.value) {
             cur = cur?.prev
         }
@@ -127,8 +127,8 @@ public class LinkedList<T>: CustomDebugStringConvertible {
 
     /// Appends a new node. Returns newly inserted node.
     /// - Complexity: O(1).
-    @discardableResult public func append(_ value: T) -> LinkedListNode<T>? {
-        let new = LinkedListNode(value)
+    @discardableResult public func append(_ value: T) -> DoublyLinkedListNode<T>? {
+        let new = DoublyLinkedListNode(value)
         new.prev = last
         last?.next = new
         count += 1
@@ -141,8 +141,8 @@ public class LinkedList<T>: CustomDebugStringConvertible {
 
     /// Appends a new node. Returns newly inserted node.
     /// - Complexity: O(1).
-    @discardableResult public func insertFirst(_ value: T) -> LinkedListNode<T>? {
-        let new = LinkedListNode(value)
+    @discardableResult public func insertFirst(_ value: T) -> DoublyLinkedListNode<T>? {
+        let new = DoublyLinkedListNode(value)
         new.next = first
         first?.prev = new
         count += 1
@@ -155,8 +155,8 @@ public class LinkedList<T>: CustomDebugStringConvertible {
 
     /// Inserts a new node with given value after given node. Returns newly inserted node.
     /// - Complexity: O(1).
-    @discardableResult public func insert(_ value: T, after node: LinkedListNode<T>) -> LinkedListNode<T> {
-        let new = LinkedListNode(value)
+    @discardableResult public func insert(_ value: T, after node: DoublyLinkedListNode<T>) -> DoublyLinkedListNode<T> {
+        let new = DoublyLinkedListNode(value)
         new.prev = node
         new.next = node.next
         new.next?.prev = new
@@ -170,8 +170,8 @@ public class LinkedList<T>: CustomDebugStringConvertible {
 
     /// Inserts a new node with given value before given node. Returns newly inserted node.
     /// - Complexity: O(1).
-    @discardableResult public func insert(_ value: T, before node: LinkedListNode<T>) -> LinkedListNode<T> {
-        let new = LinkedListNode(value)
+    @discardableResult public func insert(_ value: T, before node: DoublyLinkedListNode<T>) -> DoublyLinkedListNode<T> {
+        let new = DoublyLinkedListNode(value)
         new.prev = node.prev
         new.prev?.next = new
         new.next = node
@@ -185,7 +185,7 @@ public class LinkedList<T>: CustomDebugStringConvertible {
 
     /// Removes given node.
     /// - Complexity: O(1).
-    public func remove(node: LinkedListNode<T>) {
+    public func remove(node: DoublyLinkedListNode<T>) {
         node.next?.prev = node.prev
         node.prev?.next = node.next
         count -= 1
@@ -230,8 +230,8 @@ public class LinkedList<T>: CustomDebugStringConvertible {
 
     /// Searchs value and return yes if found otherwise no.
     /// - Complexity: O(*n*), where *n* is the length of the collection.
-    public func contains(node: LinkedListNode<T>) -> Bool {
-        var cur: LinkedListNode<T>? = first
+    public func contains(node: DoublyLinkedListNode<T>) -> Bool {
+        var cur: DoublyLinkedListNode<T>? = first
         while cur != nil && cur !== node {
             cur = cur?.next
         }
@@ -239,7 +239,7 @@ public class LinkedList<T>: CustomDebugStringConvertible {
     }
 }
 
-extension LinkedList where T: Equatable {
+extension DoublyLinkedList where T: Equatable {
 
     /// Searchs value and return yes if found otherwise no.
     /// - Parameters:
@@ -255,7 +255,7 @@ extension LinkedList where T: Equatable {
     ///   - value: A value to search
     /// - Complexity: O(*n*), where *n* is the length of the collection.
     /// - Note: Available when `T` conforms to `Equatable`
-    public func findFirst(_ value: T) -> LinkedListNode<T>? {
+    public func findFirst(_ value: T) -> DoublyLinkedListNode<T>? {
         return findFirst(where: { $0 == value })
     }
 
@@ -264,7 +264,7 @@ extension LinkedList where T: Equatable {
     ///   - value: A value to search
     /// - Complexity: O(*n*), where *n* is the length of the collection.
     /// - Note: Available when `T` conforms to `Equatable`
-    public func findLast(_ value: T) -> LinkedListNode<T>? {
+    public func findLast(_ value: T) -> DoublyLinkedListNode<T>? {
         return findLast(where: { $0 == value })
     }
 
@@ -273,7 +273,7 @@ extension LinkedList where T: Equatable {
     ///   - value: A linked node to remove
     /// - Complexity: O(1).
     /// - Note: Available when `T` conforms to `Equatable`
-    @discardableResult public func remove(_ value: T) -> LinkedListNode<T>? {
+    @discardableResult public func remove(_ value: T) -> DoublyLinkedListNode<T>? {
         if let node = findFirst(value) {
             remove(node: node)
             return node

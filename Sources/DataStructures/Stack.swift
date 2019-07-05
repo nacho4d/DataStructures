@@ -9,7 +9,7 @@
 public struct Stack<T> {
 
     /// Internal storage.
-    let storage = LinkedList<T>()
+    let storage = DoublyLinkedList<T>()
 
     /// Designated initializer. Creates a new instance of a stack.
     public init() {

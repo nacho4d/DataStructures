@@ -1,7 +1,7 @@
 import XCTest
 @testable import DataStructures
 
-final class LinkedListTests: XCTestCase {
+final class DoublyLinkedListTests: XCTestCase {
     
     override func setUp() {
         continueAfterFailure = false
@@ -9,7 +9,7 @@ final class LinkedListTests: XCTestCase {
     }
 
     /// Helper function that iterates a list to check its nodes order and count. Uses an array for comparison reasons
-    func assertList<T: Equatable>(_ list: LinkedList<T>, _ array: Array<T>, _ message: @autoclosure () -> String = "", file: StaticString = #file, line: UInt = #line) {
+    func assertList<T: Equatable>(_ list: DoublyLinkedList<T>, _ array: Array<T>, _ message: @autoclosure () -> String = "", file: StaticString = #file, line: UInt = #line) {
         print("Array: \(array)")
         print("Linked: \(list)")
         // check first and value
@@ -19,7 +19,7 @@ final class LinkedListTests: XCTestCase {
         XCTAssertNil(list.last?.next, "last?.next is incorrect", file: file, line: line)
         
         // check correctness of next
-        var cur: LinkedListNode<T>? = nil
+        var cur: DoublyLinkedListNode<T>? = nil
         for (index, elem) in array.enumerated() {
             if index == 0 {
                 cur = list.first
@@ -47,7 +47,7 @@ final class LinkedListTests: XCTestCase {
     
     func testBasics() throws {
         
-        let list = LinkedList<Int>()
+        let list = DoublyLinkedList<Int>()
         XCTAssertEqual(list.count, 0)
         
         let node1 = try XCTUnwrap(list.insertFirst(1))
@@ -104,7 +104,7 @@ final class LinkedListTests: XCTestCase {
     }
     
     func testFindBackwards() throws {
-        let list = LinkedList<Int>()
+        let list = DoublyLinkedList<Int>()
         list.append(0)
         let node5 = list.append(5)
         list.append(1)
@@ -118,7 +118,7 @@ final class LinkedListTests: XCTestCase {
     }
 
     func testRemoveAll() throws {
-        let list = LinkedList<Int>()
+        let list = DoublyLinkedList<Int>()
         list.append(0)
         list.append(5)
         list.append(1)
@@ -131,7 +131,7 @@ final class LinkedListTests: XCTestCase {
     }
 
     func testContains() throws {
-        let list = LinkedList<Int>()
+        let list = DoublyLinkedList<Int>()
         list.append(0)
         list.append(1)
         list.append(5)
@@ -145,14 +145,14 @@ final class LinkedListTests: XCTestCase {
     }
 
     func testInitWithIterable() throws {
-        let list = LinkedList(sequence: [1, 2, 3, 4, 5])
+        let list = DoublyLinkedList(sequence: [1, 2, 3, 4, 5])
         assertList(list, [1, 2, 3, 4, 5])
     }
 
     func testInitWithLinkedNode() throws {
-        let list = LinkedList(sequence: [1, 2, 3, 4, 5])
+        let list = DoublyLinkedList(sequence: [1, 2, 3, 4, 5])
         assertList(list, [1, 2, 3, 4, 5])
-        let list2 = LinkedList(head: list.first!)
+        let list2 = DoublyLinkedList(head: list.first!)
         assertList(list2, [1, 2, 3, 4, 5])
     }
 
