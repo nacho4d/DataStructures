@@ -56,6 +56,31 @@ final class GraphTests: XCTestCase {
         XCTAssertEqual(graph.isReachable(from: e, to: a), false)
     }
 
+    func testLoop() throws {
+        ///           F
+        ///         ↙︎ ⇅
+        ///    A → D → C
+        ///     ↙︎ ⇅
+        ///    B     E
+        let graph = Graph<String>()
+        let f = graph.addVertex(value: "F")
+        let e = graph.addVertex(value: "E")
+        let d = graph.addVertex(value: "D")
+        let c = graph.addVertex(value: "C")
+        let b = graph.addVertex(value: "B")
+        let a = graph.addVertex(value: "A")
+        graph.addEdge(from: a, to: d)
+        graph.addEdge(from: c, to: f)
+        graph.addEdge(from: d, to: b)
+        graph.addEdge(from: d, to: e)
+        graph.addEdge(from: d, to: c)
+        graph.addEdge(from: e, to: d)
+        graph.addEdge(from: f, to: c)
+        graph.addEdge(from: f, to: d)
+        XCTAssertEqual(graph.isReachable(from: a, to: e), true)
+        XCTAssertEqual(graph.isReachable(from: e, to: a), false)
+    }
+
     static var allTests = [
         ("testBasics", testBasics),
     ]

@@ -128,6 +128,7 @@ extension Graph {
     }
 
     func isReachable(from: GraphVertex<T>, to: GraphVertex<T>, visited: inout [GraphVertex<T>: Bool]) -> Bool {
+        print("isReachable: from \(from.value) to  \(to.value)")
         // Have we been here already?
         if visited[from] == true {
             return false
