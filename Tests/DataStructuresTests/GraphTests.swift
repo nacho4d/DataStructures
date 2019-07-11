@@ -13,7 +13,7 @@ import XCTest
 final class GraphTests: XCTestCase {
 
     override func setUp() {
-        continueAfterFailure = true
+        continueAfterFailure = false
         super.setUp()
     }
 
@@ -52,8 +52,15 @@ final class GraphTests: XCTestCase {
         graph.addEdge(from: e, to: b)
         graph.addEdge(from: f, to: c)
 
-        XCTAssertEqual(graph.isReachable(from: a, to: e), true) // a -> d -> e
+        XCTAssertEqual(graph.isReachable(from: a, to: b), true) // a -> b
+        XCTAssertEqual(graph.isReachable(from: a, to: e), true)  // a -> d -> e
         XCTAssertEqual(graph.isReachable(from: e, to: a), false)
+
+        graph.removeEdge(from: a, to: d)
+        XCTAssertEqual(graph.isReachable(from: a, to: b), true) // a -> b
+        XCTAssertEqual(graph.isReachable(from: a, to: e), false)
+
+
     }
 
     func testLoop() throws {
@@ -83,5 +90,6 @@ final class GraphTests: XCTestCase {
 
     static var allTests = [
         ("testBasics", testBasics),
+        ("testLoop", testLoop),
     ]
 }

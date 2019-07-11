@@ -49,7 +49,7 @@ import Foundation
 ///
 public class GraphVertex<T: Hashable>: Hashable, CustomDebugStringConvertible {
     public internal(set) var value: T
-    public internal(set) var edges: GraphEdge<T>?
+    public internal(set) var edges: LinkedList<GraphEdge<T>>?
     public internal(set) var next: GraphVertex<T>?
     public init(value: T) {
         self.value = value
@@ -66,17 +66,18 @@ public class GraphVertex<T: Hashable>: Hashable, CustomDebugStringConvertible {
 }
 public class GraphEdge<T: Hashable> {
     public internal(set) weak var connectsTo: GraphVertex<T>! // weak to avoit retain cycles
-    public internal(set) var next: GraphEdge<T>?
     public init(connectsTo vertex: GraphVertex<T>) {
         self.connectsTo = vertex
     }
 }
 public class Graph<T: Hashable> {
     /// Number of vertices
-    var count = 0
+    public var count: Int {
+        return vertices.count
+    }
 
-    /// Simple linked list of vertices
-    public internal(set) var vertices: GraphVertex<T>?
+    /// Internal storage of vertices. Each vertex contains a linked list of edges
+    public internal(set) var vertices = LinkedList<GraphVertex<T>>()
 }
 
 extension Graph {
@@ -84,48 +85,71 @@ extension Graph {
     /// - Complexity: Time Complexity is O(1)
     @discardableResult public func addVertex(value: T) -> GraphVertex<T> {
         let new = GraphVertex(value: value)
-        if vertices != nil {
-            new.next = vertices
-        }
-        vertices = new
-        count += 1
+        vertices.append(new)
         return new
     }
 
+    /// Remove a vertex from the graph.
+    /// - Complexity: Time Complexity is O(*n*^2) where n is number of vertices. Removing vertex it self is O(1) but all edges refering such vertex need to be removed so it becomes O(*n*^2).
+    public func removeVertex(_ vertex: GraphVertex<T>) {
+        vertices.remove(vertex)
+        for vertex in vertices where vertex.edges != nil {
+            vertex.edges = LinkedList(sequence: vertex.edges!.filter({ (edge) -> Bool in
+                return edge.connectsTo !== vertex
+            }))
+        }
+    }
+
+    // MARK: -
+
     /// Iterate through vertices until `predicate` returns true.
     /// - Returns: returns found object or `nil` if not found
+    /// - Complexity: Since search is linear time complexity is O(*n*)
     public func findVertex(where predicate: ((GraphVertex<T>)-> Bool)) -> GraphVertex<T>? {
-        var cur: GraphVertex<T>? = vertices
-        while cur != nil {
-            if predicate(cur!) {
-                return cur
+        for vertex in vertices {
+            if predicate(vertex) {
+                return vertex
             }
-            cur = cur?.next
         }
         return nil
     }
 
     /// Iterate through edges until `predicate` returns true.
     /// - Returns: returns found object or `nil` if not found
-    public func findEdge(from: GraphVertex<T>, where predicate: ((GraphVertex<T>)-> Bool)) -> GraphVertex<T>? {
-        var cur: GraphVertex<T>? = vertices
-        while cur != nil {
-            if predicate(cur!) {
-                return cur
+    /// - Complexity: Since search is linear time complexity is O(*m*) where m is the number of edges given vertex has
+    public func findEdge(from: GraphVertex<T>, where predicate: ((GraphVertex<T>)-> Bool)) -> GraphEdge<T>? {
+        for edge in from.edges ?? LinkedList<GraphEdge<T>>() {
+            if predicate(edge.connectsTo) {
+                return edge
             }
-            cur = cur?.next
         }
         return nil
     }
 
-    /// Add an edge from `from` vertex to `to` vertex. For better performance edge will be added at the head of edges
+    // MARK: -
+
+    /// Add an edge from `from` vertex to `to` vertex.
     /// - Returns: returns added vertex
+    /// - Complexity: O(1)
     @discardableResult public func addEdge(from: GraphVertex<T>, to: GraphVertex<T>) -> GraphEdge<T> {
         let edge = GraphEdge(connectsTo: to)
-        edge.next = from.edges
-        from.edges = edge
+        if from.edges == nil {
+            from.edges = LinkedList(sequence: [edge])
+        } else {
+            from.edges?.append(edge)
+        }
         return edge
     }
+
+    /// Remove edge from `from` vertex to `to` vertex. For better performance edge will be added at the head of edges
+    /// - Complexity: Since search is linear time complexity is O(*m*) where m is the number of edges given vertex has
+    @discardableResult public func removeEdge(from: GraphVertex<T>, to: GraphVertex<T>) -> GraphEdge<T>? {
+        guard let toRemove = from.edges?.findFirst(where: { return $0.connectsTo === to }) else { return nil }
+        from.edges?.remove(node: toRemove)
+        return toRemove.value
+    }
+
+    // MARK: -
 
     func isReachable(from: GraphVertex<T>, to: GraphVertex<T>, visited: inout [GraphVertex<T>: Bool]) -> Bool {
         print("isReachable: from \(from.value) to  \(to.value)")
@@ -143,12 +167,10 @@ extension Graph {
 
         // See if we can get there from each of the vertices we connect to.
         // If we can get there from at least one of them, it is reachable.
-        var edge = from.edges
-        while edge != nil {
-            if isReachable(from: edge!.connectsTo, to: to, visited: &visited) {
+        for edge in from.edges ?? LinkedList<GraphEdge<T>>() {
+            if isReachable(from: edge.connectsTo, to: to, visited: &visited) {
                 return true
             }
-            edge = edge?.next
         }
         return false
     }
