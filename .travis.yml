@@ -1,0 +1,13 @@
+language: swift
+osx_image: xcode11
+xcode_project: DataStructures.xcodeproj
+xcode_scheme: DataStructures-Package
+before_install:
+  - swift package generate-xcodeproj
+#before_script:
+#  - set -e -o pipefail
+script:
+  - uname -a
+  - xcodebuild test -scheme DataStructures-Package -enableCodeCoverage YES -derivedDataPath Build/
+  - xcrun xccov view --report --json Build/Logs/Test/*.xcresult
+
