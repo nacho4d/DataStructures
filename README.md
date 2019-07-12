@@ -57,4 +57,4 @@ Open package in Xcode 11 or higher and develop as usual.
 - Add more search methods (Breadth First Search (BFS), depth First Search (DFS) )
 - Implement much more stuff from ["Top Algorithms/Data Structures/Concepts every computer science student should know"](https://link.medium.com/i99SUWm4GX)
 - Show code coverage graphically
-- Get a CI (Circle CI? or Travis?, I would like to use Xcode11)
+- Get a CI (Circle CI? or Travis?, I would like to use Xcode11, travis is free)
