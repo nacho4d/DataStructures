@@ -288,7 +288,7 @@ extension LinkedList where T: Equatable {
 extension LinkedList: Sequence {
 
     /// Iterator implementation
-    public class Iterator<T>: IteratorProtocol {
+    public class It<T>: IteratorProtocol { // This used to be Iterator<T> but leads to compiler error: "invalid redeclaration of 'Iterator'"
         var cur: LinkedListNode<T>?
 
         /// IteratorProtocol protocol requirement
@@ -300,7 +300,7 @@ extension LinkedList: Sequence {
     }
 
     /// Sequence protocol requirement
-    public func makeIterator() -> Iterator<T> {
+    public func makeIterator() -> It<T> {
         let g = LinkedList.Iterator()
         g.cur = first
         return g
