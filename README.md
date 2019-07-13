@@ -7,6 +7,8 @@ The swift standard library does not provide a linked list imeplementation so thi
 <img src="https://img.shields.io/badge/Jazzy-docs-brightgreen.svg" />
 <img src="https://img.shields.io/badge/coverage-99%25-brightgreen.svg" />
 
+[![Build Status](https://travis-ci.com/nacho4d/DataStructures.svg?branch=master)](https://travis-ci.com/nacho4d/DataStructures)
+
 ## Big O Notation
 
 Complexity of each method in this framework is documented. Below table can be used to compare/see them all.
