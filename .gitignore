@@ -8,6 +8,9 @@
 # Emacs
 *~
 
+# Codecoverage
+*.coverage.txt
+
 # Jazzy generated folders
 /docs/
 /build/
