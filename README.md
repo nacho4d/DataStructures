@@ -4,7 +4,7 @@ Data structures like Linked Lists, Stacks, Queues, Sort and Search algorithms et
 
 The swift standard library does not provide a linked list imeplementation so this framework implements it and also provides Stack, Queue implementation based on linked list. If you prefer an array implementation feel free to use standard `Array` which contains `first`, `list`, `push`, `pop` like methods. DataStructures interfaces and implementations are inspired by C# .Net and Java SE implementations.
 
-<a alt="Travis Build" href="https://travis-ci.com/nacho4d/DataStructures"><img src="https://travis-ci.com/nacho4d/DataStructures.svg?branch=master" /></a>
+<a alt="Travis Build" href="https://travis-ci.org/nacho4d/DataStructures"><img src="https://travis-ci.org/nacho4d/DataStructures.svg?branch=master" /></a>
 <a alt="Codecov Code Coverage" href="https://codecov.io/gh/nacho4d/DataStructures/"><img src="https://codecov.io/gh/nacho4d/DataStructures/branch/master/graph/badge.svg" /></a>
 <img src="https://img.shields.io/badge/Jazzy-docs-brightgreen.svg" />
 
