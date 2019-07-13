@@ -5,6 +5,9 @@
 /*.xcodeproj
 /.swiftpm
 
+# Emacs
+*~
+
 # Jazzy generated folders
 /docs/
 /build/

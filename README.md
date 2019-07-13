@@ -9,6 +9,8 @@ The swift standard library does not provide a linked list imeplementation so thi
 
 [![Build Status](https://travis-ci.com/nacho4d/DataStructures.svg?branch=master)](https://travis-ci.com/nacho4d/DataStructures)
 
+[![Coverage Status](https://coveralls.io/repos/github/nacho4d/DataStructures/badge.svg?branch=master)](https://coveralls.io/github/nacho4d/DataStructures?branch=master)
+
 ## Big O Notation
 
 Complexity of each method in this framework is documented. Below table can be used to compare/see them all.
