@@ -14,6 +14,7 @@ after_success:
   # Calculate functions coverage and show it in log
   - PROJECT_TARGET_NAME=DataStructures.framework
   - XCODE_TEST_RESULT=$(ls -1 Build/Logs/Test/ | grep xcresult | tail -1)
-  - xcrun xccov view --report --files-for-target $PROJECT_TARGET_NAME  $XCODE_TEST_RESULT
+  # - xcrun xccov view --report --files-for-target $PROJECT_TARGET_NAME  $XCODE_TEST_RESULT
+  - xcrun xccov view --report --files-for-target DataStructures.framework Build/Logs/Test/*.xcresult
   # Calculate line coverage and upload it to codecov
   - bash <(curl -s https://codecov.io/bash) -J 'DataStructures$' -D Build/
