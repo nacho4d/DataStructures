@@ -61,7 +61,7 @@ public class GraphVertex<T: Hashable>: Hashable, CustomDebugStringConvertible {
         return lhs.value == rhs.value
     }
     public var debugDescription: String {
-        return "[\(value)->\(String(describing: next))]"
+        return "[\(value)->\(String(describing: next?.value))]"
     }
 }
 public class GraphEdge<T: Hashable> {
