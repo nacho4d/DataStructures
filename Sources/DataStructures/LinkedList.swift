@@ -5,25 +5,29 @@
 //  Created by Guillermo Ignacio Enriquez Gutierrez on 2019/06/24.
 //
 
-/// Node implementation for two way linked list. Container for objects of type T. (Based on C# .Net Implementation)
-public class LinkedListNode <T>: CustomDebugStringConvertible {
+/// Linked List Node protocol. Used by Linked List implementation.
+/// - Note:
+/// If you need to extend a node consider the following basic implementation:
+/// ```
+///     final class MyNode<T>: LinkedListNode {
+///         typealias Value = T
+///         public internal(set) var value: T
+///         public internal(set) var next: MyNode<T>?
+///         public internal(set) weak var prev: MyNode<T>?
+///         internal required init(value: T) { self.value = value }
+///     }
+///  ```
+public protocol LinkedListNode: class {
+    associatedtype Value
+    var value: Value {get set}
+    var next: Self? {get set}
+    var prev: Self? {get set}
+    init(value: Value)
+}
 
-    /// Value contained in this node
-    public internal(set) var value: T
-
-    /// Strong reference to next element
-    public internal(set) var next: LinkedListNode<T>?
-
-    /// Weak reference to prev element
-    public internal(set) weak var prev: LinkedListNode<T>?
-
-    /// Designated initializer. Nodes are created internally by LinkedList objects.
-    internal init(_ value: T) {
-        self.value = value
-        self.next = nil
-    }
-
-    /// A textual representation of the array and its elements, suitable for debugging.
+/// Default methods
+extension LinkedListNode {
+    /// Internal method. A textual representation of the array and its elements, suitable for debugging.
     public var debugDescription: String {
         var desc: String = ""
         if let p = prev {
@@ -40,10 +44,10 @@ public class LinkedListNode <T>: CustomDebugStringConvertible {
         return desc
     }
 
-    /// Internal method. Count all subnodes and return last node (could be self)
-    func countNodesAndFindLast() -> (Int, LinkedListNode<T>) {
+    /// Internal method. Count all subnodes and return last node which could be self
+    func countNodesAndFindLast() -> (Int, Self) {
         var res = 1
-        var cur: LinkedListNode<T> = self
+        var cur: Self = self
         while cur.next != nil {
             cur = cur.next!
             res += 1
@@ -52,37 +56,49 @@ public class LinkedListNode <T>: CustomDebugStringConvertible {
     }
 }
 
-/// Linked List implementation. Represents a doubly linked list.
-public class LinkedList<T>: CustomDebugStringConvertible {
+/// Node implementation for two way linked list. Container for objects of type T. (Based on C# .Net Implementation)
+final public class BasicLinkedListNode<T>: LinkedListNode {
+
+    /// Value contained in this node
+    public typealias Value = T
+
+    /// Strong reference to next element.
+    /// - Note:
+    /// `value` should not be changed by clients. Setter is for LinkedList interal use only. Changing value leads to undefined behaviour
+    public var value: T
+
+    /// Weak reference to prev element
+    /// - Note:
+    /// `next` should not be changed by clients. Setter is for LinkedList interal use only. Changing value leads to undefined behaviour
+    public var next: BasicLinkedListNode<T>?
+
+    /// Designated initializer. Nodes are created internally by LinkedList objects.
+    /// - Note:
+    /// `prev` should not be changed by clients. Setter is for LinkedList interal use only. Changing value leads to undefined behaviour.
+    /// - Warning:
+    ///  `prev` is defined as weak to avoid retain cycles. Other custom implementations of `LinkedListNode` should also declare `prev` as `weak`.
+    public weak var prev: BasicLinkedListNode<T>?
+
+    /// Designated initializer. Nodes are created internally by Linked List objects.
+    public required init(value: T) {
+        self.value = value
+    }
+}
+
+/// Doubly linked list implementation. Represents a doubly linked list which uses a generic object as a nodes. Refer to `LinkedList` class which uses the basic `BasicLinkedListNode` as node which should fulfil common cases.
+public class BasicLinkedList<Node: LinkedListNode> {
 
     /// First element (head) in the list
-    public var first: LinkedListNode<T>? = nil
+    public var first: Node? = nil
 
     /// Last element (tail) in the list
-    public var last: LinkedListNode<T>? = nil
+    public var last: Node? = nil
 
     /// The number of elements in the list
     public var count = 0
 
-    /// A textual representation of the array and its elements, suitable for debugging.
-    public var debugDescription: String {
-        var cur = first
-        var descs = [String]()
-        while cur != nil {
-            descs.append(cur!.debugDescription)
-            cur = cur?.next
-        }
-        var descs2 = [String]()
-        cur = last
-        while cur != nil {
-            descs2.insert(cur!.debugDescription, at: 0)
-            cur = cur?.prev
-        }
-        return "First: \(first == nil ? "nil": first!.debugDescription)\nLast: \(last == nil ? "nil": last!.debugDescription)\nNexts: \(descs.joined(separator: ", "))\nPrevs: \(descs.joined(separator: ", "))\nCount: \(count)"
-    }
-
     /// Designated initializer. Creates a new instance of a list. If `head` is given it will be the head.
-    public init(head: LinkedListNode<T>? = nil) {
+    public init(head: Node? = nil) {
         first = head
         if let f = first {
             (count, last) = f.countNodesAndFindLast()
@@ -92,10 +108,14 @@ public class LinkedList<T>: CustomDebugStringConvertible {
         }
     }
 
+    public class func node(value: Node.Value) -> Node {
+        return Node(value: value)
+    }
+
     /// Designated initializer. Creates a new instance of a list and add elements from `sequence`.
     /// - Parameters:
     ///   - sequence: sequence containing elements to add to linked list.
-    public init<S: Sequence>(sequence: S) where S.Element == T {
+    public init<S: Sequence>(sequence: S) where S.Element == Node.Value {
         first = nil
         count = 0
         last = nil
@@ -107,8 +127,8 @@ public class LinkedList<T>: CustomDebugStringConvertible {
     /// Search node that matches given predicate. Return node if found otherwise nil.
     /// - Parameters
     ///   - predicate: A closure that takes an element of the sequence as its argument and returns a Boolean value indicating whether the element is a match.
-    public func findFirst(where predicate: ((T) -> Bool)) -> LinkedListNode<T>? {
-        var cur: LinkedListNode<T>? = first
+    public func findFirst(where predicate: ((Node.Value) -> Bool)) -> Node? {
+        var cur: Node? = first
         while cur != nil && !predicate(cur!.value) {
             cur = cur?.next
         }
@@ -117,8 +137,8 @@ public class LinkedList<T>: CustomDebugStringConvertible {
 
     /// Search node that matches given predicate starting from the end. Return node if found otherwise nil.
     /// - Complexity: O(*n*), where *n* is the length of the collection.
-    public func findLast(where predicate: ((T) -> Bool)) -> LinkedListNode<T>? {
-        var cur: LinkedListNode<T>? = last
+    public func findLast(where predicate: ((Node.Value) -> Bool)) -> Node? {
+        var cur: Node? = last
         while cur != nil && !predicate(cur!.value) {
             cur = cur?.prev
         }
@@ -127,8 +147,8 @@ public class LinkedList<T>: CustomDebugStringConvertible {
 
     /// Appends a new node. Returns newly inserted node.
     /// - Complexity: O(1).
-    @discardableResult public func append(_ value: T) -> LinkedListNode<T>? {
-        let new = LinkedListNode(value)
+    @discardableResult public func append(_ value: Node.Value) -> Node? {
+        let new = BasicLinkedList.node(value: value)
         new.prev = last
         last?.next = new
         count += 1
@@ -139,10 +159,10 @@ public class LinkedList<T>: CustomDebugStringConvertible {
         return new
     }
 
-    /// Appends a new node. Returns newly inserted node.
+    /// Insert a new node at the beggining. Returns newly inserted node.
     /// - Complexity: O(1).
-    @discardableResult public func insertFirst(_ value: T) -> LinkedListNode<T>? {
-        let new = LinkedListNode(value)
+    @discardableResult public func insertFirst(_ value: Node.Value) -> Node? {
+        let new = BasicLinkedList.node(value: value)
         new.next = first
         first?.prev = new
         count += 1
@@ -155,8 +175,8 @@ public class LinkedList<T>: CustomDebugStringConvertible {
 
     /// Inserts a new node with given value after given node. Returns newly inserted node.
     /// - Complexity: O(1).
-    @discardableResult public func insert(_ value: T, after node: LinkedListNode<T>) -> LinkedListNode<T> {
-        let new = LinkedListNode(value)
+    @discardableResult public func insert(_ value: Node.Value, after node: Node) -> Node {
+        let new = BasicLinkedList.node(value: value)
         new.prev = node
         new.next = node.next
         new.next?.prev = new
@@ -170,8 +190,8 @@ public class LinkedList<T>: CustomDebugStringConvertible {
 
     /// Inserts a new node with given value before given node. Returns newly inserted node.
     /// - Complexity: O(1).
-    @discardableResult public func insert(_ value: T, before node: LinkedListNode<T>) -> LinkedListNode<T> {
-        let new = LinkedListNode(value)
+    @discardableResult public func insert(_ value: Node.Value, before node: Node) -> Node {
+        let new = BasicLinkedList.node(value: value)
         new.prev = node.prev
         new.prev?.next = new
         new.next = node
@@ -185,7 +205,7 @@ public class LinkedList<T>: CustomDebugStringConvertible {
 
     /// Removes given node.
     /// - Complexity: O(1).
-    public func remove(node: LinkedListNode<T>) {
+    public func remove(node: Node) {
         node.next?.prev = node.prev
         node.prev?.next = node.next
         count -= 1
@@ -230,8 +250,8 @@ public class LinkedList<T>: CustomDebugStringConvertible {
 
     /// Searchs value and return yes if found otherwise no.
     /// - Complexity: O(*n*), where *n* is the length of the collection.
-    public func contains(node: LinkedListNode<T>) -> Bool {
-        var cur: LinkedListNode<T>? = first
+    public func contains(node: Node) -> Bool {
+        var cur: Node? = first
         while cur != nil && cur !== node {
             cur = cur?.next
         }
@@ -239,14 +259,14 @@ public class LinkedList<T>: CustomDebugStringConvertible {
     }
 }
 
-extension LinkedList where T: Equatable {
+extension BasicLinkedList where Node.Value: Equatable {
 
     /// Searchs value and return yes if found otherwise no.
     /// - Parameters:
     ///   - value: A value to search/compare
     /// - Complexity: O(*n*), where *n* is the length of the collection.
     /// - Note: Available when `T` conforms to `Equatable`
-    public func contains(_ value: T) -> Bool {
+    public func contains(_ value: Node.Value) -> Bool {
         return findFirst(where: { $0 == value }) != nil
     }
 
@@ -255,7 +275,7 @@ extension LinkedList where T: Equatable {
     ///   - value: A value to search
     /// - Complexity: O(*n*), where *n* is the length of the collection.
     /// - Note: Available when `T` conforms to `Equatable`
-    public func findFirst(_ value: T) -> LinkedListNode<T>? {
+    public func findFirst(_ value: Node.Value) -> Node? {
         return findFirst(where: { $0 == value })
     }
 
@@ -264,7 +284,7 @@ extension LinkedList where T: Equatable {
     ///   - value: A value to search
     /// - Complexity: O(*n*), where *n* is the length of the collection.
     /// - Note: Available when `T` conforms to `Equatable`
-    public func findLast(_ value: T) -> LinkedListNode<T>? {
+    public func findLast(_ value: Node.Value) -> Node? {
         return findLast(where: { $0 == value })
     }
 
@@ -273,7 +293,7 @@ extension LinkedList where T: Equatable {
     ///   - value: A linked node to remove
     /// - Complexity: O(1).
     /// - Note: Available when `T` conforms to `Equatable`
-    @discardableResult public func remove(_ value: T) -> LinkedListNode<T>? {
+    @discardableResult public func remove(_ value: Node.Value) -> Node? {
         if let node = findFirst(value) {
             remove(node: node)
             return node
@@ -284,15 +304,34 @@ extension LinkedList where T: Equatable {
 
 }
 
+extension BasicLinkedList: CustomDebugStringConvertible {
+    /// A textual representation of the array and its elements, suitable for debugging.
+    public var debugDescription: String {
+        var cur = first
+        var descs = [String]()
+        while cur != nil {
+            descs.append(cur!.debugDescription)
+            cur = cur?.next
+        }
+        var descs2 = [String]()
+        cur = last
+        while cur != nil {
+            descs2.insert(cur!.debugDescription, at: 0)
+            cur = cur?.prev
+        }
+        return "First: \(first == nil ? "nil": first!.debugDescription)\nLast: \(last == nil ? "nil": last!.debugDescription)\nNexts: \(descs.joined(separator: ", "))\nPrevs: \(descs.joined(separator: ", "))\nCount: \(count)"
+    }
+}
+
 /// Sequence protocol adoption. It allows `for ... in` and a bunch of other methods too.
-extension LinkedList: Sequence {
+extension BasicLinkedList: Sequence {
 
     /// Iterator implementation
     public class It<T>: IteratorProtocol { // This used to be Iterator<T> but leads to compiler error: "invalid redeclaration of 'Iterator'"
-        var cur: LinkedListNode<T>?
+        var cur: Node?
 
         /// IteratorProtocol protocol requirement
-        public func next() -> T? {
+        public func next() -> Node.Value? {
             let res = cur?.value
             cur = cur?.next
             return res
@@ -300,9 +339,16 @@ extension LinkedList: Sequence {
     }
 
     /// Sequence protocol requirement
-    public func makeIterator() -> It<T> {
-        let g = LinkedList.Iterator()
+    public func makeIterator() -> It<Node.Value> {
+        let g = BasicLinkedList.Iterator()
         g.cur = first
         return g
     }
+}
+
+/// Doubly linked list implementation that uses default `BasicLinkedList` node.
+/// - Note:
+/// If you need to use a linked list with a custom node object Refer to protocl `LinkedListNode`, implement it and use  `BasicLinkedList` with your class.
+/// If you need to customize the list itself then BasicLinkedList can be subclassed too.
+public class LinkedList<T>: BasicLinkedList<BasicLinkedListNode<T>> {
 }

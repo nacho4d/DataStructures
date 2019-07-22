@@ -19,7 +19,7 @@ final class LinkedListTests: XCTestCase {
         XCTAssertNil(list.last?.next, "last?.next is incorrect", file: file, line: line)
         
         // check correctness of next
-        var cur: LinkedListNode<T>? = nil
+        var cur: BasicLinkedListNode<T>? = nil
         for (index, elem) in array.enumerated() {
             if index == 0 {
                 cur = list.first
