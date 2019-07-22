@@ -87,8 +87,8 @@ final class GraphTests: XCTestCase {
 
     func testFindEdges() throws {
         let graph = Graph<String>()
-        let d = graph.addVertex(value: "D")
-        let c = graph.addVertex(value: "C")
+        let _ = graph.addVertex(value: "D")
+        let _ = graph.addVertex(value: "C")
         let b = graph.addVertex(value: "B")
         let a = graph.addVertex(value: "A")
 
