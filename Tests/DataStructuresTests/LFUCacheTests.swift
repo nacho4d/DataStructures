@@ -1,5 +1,5 @@
 //
-//  CacheTests.swift
+//  LFUCacheTests.swift
 //
 //
 //  Created by Guillermo Ignacio Enriquez Gutierrez on 2019/07/20.
@@ -8,7 +8,7 @@
 import XCTest
 @testable import DataStructures
 
-final class CacheTests: XCTestCase {
+final class LFUCacheTests: XCTestCase {
 
     override func setUp() {
         continueAfterFailure = false

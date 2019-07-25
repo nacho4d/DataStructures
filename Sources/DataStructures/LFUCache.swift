@@ -1,5 +1,5 @@
 //
-//  Cache.swift
+//  LFUCache.swift
 //
 //
 //  Created by Guillermo Ignacio Enriquez Gutierrez on 2019/07/15.
