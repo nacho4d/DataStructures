@@ -1,8 +1,10 @@
 # DataStructures
 
-Data structures like Linked Lists, Stacks, Queues, Sort and Search algorithms etc. (More comming...)
+Data structures like Doubly Linked Lists, Stacks, Queues, Graphs, LFUCache, Sort and Search algorithms etc. (More comming...)
 
-The swift standard library does not provide a linked list imeplementation so this framework implements it and also provides Stack, Queue implementation based on linked list. If you prefer an array implementation feel free to use standard `Array` which contains `first`, `list`, `push`, `pop` like methods. DataStructures interfaces and implementations are inspired by C# .Net and Java SE implementations.
+Since swift standard library does not provide a linked list implementation this framework implements it. Stack, Queue and several classes in this framework use LinkedList internally. If you prefer an array implementation feel free to use standard `Array` which contains `first`, `last`, `push`, `pop`, etc methods which will lead to same functionality (With the obvious difference you will be using an array as an storage instead of a real linked list so random access and modifications costs will change). 
+
+DataStructures interfaces and implementations are inspired some papers, other frameworks like C# .Net and Java SE implementations.
 
 <a alt="Travis Build" href="https://travis-ci.org/nacho4d/DataStructures"><img src="https://travis-ci.org/nacho4d/DataStructures.svg?branch=master" /></a>
 <a alt="Codecov Code Coverage" href="https://codecov.io/gh/nacho4d/DataStructures/"><img src="https://codecov.io/gh/nacho4d/DataStructures/branch/master/graph/badge.svg" /></a>
@@ -24,6 +26,7 @@ Complexity of each method in this framework is documented. Below table can be us
 | Linked List Item Removal/Addition |(Does not include searching item)| O(1) | O(1) | O(1) | O(1) |
 | Priority Queue Item Removal/Addition | (Rebuild tree) | O(log *n* ) | O(1) | O(1) | O(1) |
 | Heap sort | Build a max heap, then extract one by one | O(*n* log *n*) | O(*n* log *n*) | O(*n* log *n*) | O(1) | 
+| LFU Cache | Evict least frequently used object | O(1) | O(1) | O(1)| O(*n*) | 
 
 
 ### Refreshers:
@@ -40,7 +43,7 @@ Each method and symbol is documented. HTML documentation can be geneated using `
     swift package generate-xcodeproj
     jazzy -x -scheme,DataStructures-Package -m DataStructures
     open -a /Applications/Google\ Chrome.app docs/index.html
-
+    cat ./docs/undocumented.json | jq . # check undocumented symbols
 
 ## Develop
 
@@ -57,5 +60,3 @@ Open package in Xcode 11 or higher and develop as usual.
 - Add More graph theory structures
 - Add more search methods (Breadth First Search (BFS), depth First Search (DFS) )
 - Implement much more stuff from ["Top Algorithms/Data Structures/Concepts every computer science student should know"](https://link.medium.com/i99SUWm4GX)
-- Show code coverage graphically
-- Get a CI (Circle CI? or Travis?, I would like to use Xcode11, travis is free)
