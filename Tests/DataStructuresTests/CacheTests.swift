@@ -110,6 +110,11 @@ final class CacheTests: XCTestCase {
         cache[5] = "5"
         assertLfuCache(cache, [3: "3", 4: "4", 5: "5", 99: "99"], [(1, ["99", "4", "3"]), (3, ["5"])])
 
+        XCTAssertNil(cache.removeValue(forKey: 88))
+        assertLfuCache(cache, [3: "3", 4: "4", 5: "5", 99: "99"], [(1, ["99", "4", "3"]), (3, ["5"])])
+    }
+
+    func testBasicsWithSpecialFrequencyNodeRemoval() throws {
         let c = LFUCache<Int, String>(capacity: 3)
         c[1] = "1"
         c[2] = "2"
@@ -122,6 +127,17 @@ final class CacheTests: XCTestCase {
         assertLfuCache(c, [1: "4", 2: "2", 3: "3"], [(1, ["2"]), (2, ["3"]), (3, ["4"])])
         c[8] = "8"
         assertLfuCache(c, [1: "4", 3: "3", 8: "8"], [(1, ["8"]), (2, ["3"]), (3, ["4"])])
+    }
+
+    func testCapacityInitialization() throws {
+        let c = LFUCache<Int, String>(capacity: 0)
+        XCTAssertTrue(c.capacity > 0)
+
+        let c1 = LFUCache<Int, String>(capacity: -1)
+        XCTAssertTrue(c1.capacity > 0)
+
+        let c2 = LFUCache<Int, String>(capacity: 99)
+        XCTAssertEqual(c2.capacity, 99)
     }
 
     func testInitWithSequence() throws {

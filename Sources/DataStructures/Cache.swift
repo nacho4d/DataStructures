@@ -46,14 +46,26 @@ final class FrequencyNode<K, T>: LinkedListNode {
 /// - :
 public class LFUCache<Key: Hashable, Value> {
 
+    /// Internal storage. Dictionary to get access in O(1)
     var nodes =  [Key: LFUNode<Key, Value>]()
+
+    /// Internal storage. Linked List of Linked list to be able to modify cache in O(1)
     var frequencies = BasicLinkedList<FrequencyNode<Key, Value>>()
 
-    var count = 0
-    public internal(set) var capacity = 8
+    /// The number of key-value pairs in the cache.
+    public internal(set) var count = 0
 
+    /// Maximun size of internal storage. Capacity is always bigger than 0. Default is 8
+    public let capacity: Int
+
+    /// Designed initializer. Creates an empty cache that will store at most the given number of elements.
     init(capacity: Int = 8) {
-        self.capacity = capacity
+        if capacity > 0 {
+            self.capacity = capacity
+        } else {
+            self.capacity = 8
+            print("Capacity must be bigger than 0. Not applying given value")
+        }
     }
 
     /// Increase frequency of given node .
@@ -79,8 +91,11 @@ public class LFUCache<Key: Hashable, Value> {
         }
     }
 
+    // MARK: -
 
-    /// Access value for the given key
+    /// Returns the value associated with a given key
+    /// - Parameters:
+    ///   - key: The key for which to return the corresponding value
     public func value(forKey key: Key) -> Value? {
         guard let node = nodes[key] else {
             return nil
@@ -90,6 +105,8 @@ public class LFUCache<Key: Hashable, Value> {
     }
 
     /// Remove key-value pair from cache
+    /// - Parameters:
+    ///   - key: The key for which to delete the corresponding value
     @discardableResult public func removeValue(forKey key: Key) -> Value? {
         if let node = nodes[key] {
             nodes[key] = nil
@@ -105,6 +122,9 @@ public class LFUCache<Key: Hashable, Value> {
     }
 
     /// Updates the value stored in the cache for the given key, or adds a new key-value pair if the key does not exist.
+    /// - Parameters:
+    ///   - value: The value to update
+    ///   - key: The key for which to update the corresponding value
     /// - Returns: The value that was replaced, or nil if a new key-value pair was added.
     @discardableResult public func updateValue(_ value: Value, forKey key: Key) -> Value? {
         if let node = nodes[key] {
@@ -113,34 +133,37 @@ public class LFUCache<Key: Hashable, Value> {
             node.value = value
             increaseFrequency(ofNode: node)
             return oldValue
-        } else {
-            // Insert new node
-            let node = LFUNode<Key, Value>(value: value)
-            node.key = key
-            nodes[key] = node
-            if count >= capacity {
-                // There is no more capacity: Delete least recently used object
-                if let last = frequencies.first?.nodes.last {
-                    nodes[last.key] = nil
-                    frequencies.first?.nodes.remove(node: last)
-                }
-                if frequencies.first != nil && frequencies.first!.nodes.first == nil {
-                    frequencies.remove(node: frequencies.first!)
-                }
-                count -= 1
-            }
-            // Insert node (create a new frequency node if needed)
-            if frequencies.first?.value != 1 {
-                frequencies.insertFirst(node: FrequencyNode<Key, Value>(value: 1))
-            }
-            node.frequencyNode = frequencies.first!
-            frequencies.first!.nodes.insertFirst(node: node)
-            count += 1
-            return nil
         }
+        // Insert new node
+        let node = LFUNode<Key, Value>(value: value)
+        node.key = key
+        nodes[key] = node
+        if count >= capacity {
+            // There is no more capacity: Delete least recently used object
+            if let last = frequencies.first?.nodes.last {
+                nodes[last.key] = nil
+                frequencies.first?.nodes.remove(node: last)
+            }
+            if frequencies.first != nil && frequencies.first!.nodes.first == nil {
+                frequencies.remove(node: frequencies.first!)
+            }
+            count -= 1
+        }
+        // Insert node (create a new frequency node if needed)
+        if frequencies.first?.value != 1 {
+            frequencies.insertFirst(node: FrequencyNode<Key, Value>(value: 1))
+        }
+        node.frequencyNode = frequencies.first!
+        frequencies.first!.nodes.insertFirst(node: node)
+        count += 1
+        return nil
     }
 
     // MARK: Subscripts
+
+    /// Accesses the value associated with the given key for reading and writing.
+    /// - Parameters:
+    ///   - key: The key to find in the cache.
     public subscript(key: Key) -> Value? {
         get {
             // Get value for given key
