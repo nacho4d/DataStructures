@@ -2,9 +2,11 @@
 
 Data structures like Doubly Linked Lists, Stacks, Queues, Graphs, LFUCache, Sort and Search algorithms etc. (More comming...)
 
-Since swift standard library does not provide a linked list implementation this framework implements it. Stack, Queue and several classes in this framework use LinkedList internally. If you prefer an array implementation feel free to use standard `Array` which contains `first`, `last`, `push`, `pop`, etc methods which will lead to same functionality (With the obvious difference you will be using an array as an storage instead of a real linked list so random access and modifications costs will change). 
+This framework implements a LinkedList which the swift standard library does not provide. LinkedList is used used extensively by several other classes in this framework liks: `Stack`, `Queue`, `Graph`, `LFUCache`, etc. 
 
-DataStructures interfaces and implementations are inspired some papers, other frameworks like C# .Net and Java SE implementations.
+If you prefer an array implementation feel free to use standard `Array` which contains `first`, `last`, `push`, `pop`, etc methods which should allow same functionality; with the obvious difference you will be using an array as an storage instead of a real linked list so time complexity of operations like random access and item remove/modification/addition will change. 
+
+DataStructures interfaces and implementations are inspired by [some papers](http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.301.6606) and other frameworks like C# .Net and Java SE implementations.
 
 <a alt="Travis Build" href="https://travis-ci.org/nacho4d/DataStructures"><img src="https://travis-ci.org/nacho4d/DataStructures.svg?branch=master" /></a>
 <a alt="Codecov Code Coverage" href="https://codecov.io/gh/nacho4d/DataStructures/"><img src="https://codecov.io/gh/nacho4d/DataStructures/branch/master/graph/badge.svg" /></a>
