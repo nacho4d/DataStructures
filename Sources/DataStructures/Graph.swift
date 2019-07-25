@@ -7,6 +7,54 @@
 
 import Foundation
 
+/// Object to represent a vertex in a graph
+public class GraphVertex<T: Hashable>: Hashable, CustomDebugStringConvertible {
+
+    /// Element object represented as a vertex
+    public internal(set) var value: T
+
+    /// List of edges (adjacent vertices)
+    public internal(set) var edges: LinkedList<GraphEdge<T>>?
+
+    /// Reference to next vertex. Order is not necesarily according to graph structure. Order depends on add timing
+    public internal(set) var next: GraphVertex<T>?
+
+    /// Designed initializer.
+    /// - Parameter:
+    ///    - value: Element object to be represented as a vertex
+    public init(value: T) {
+        self.value = value
+    }
+
+    /// Hashable implementation. Vertex must be hashable to be added into a temporal dictionary to calculate reachability
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(value)
+    }
+
+    /// Equatable implementation. Vertex must be equatable to be compared when calculating reachability
+    public static func == (lhs: GraphVertex<T>, rhs: GraphVertex<T>) -> Bool {
+        return lhs.value == rhs.value
+    }
+
+    /// String representation for debugging purposes
+    public var debugDescription: String {
+        return "[\(value)->\(String(describing: next?.value))]"
+    }
+}
+
+/// Object to represent an edge in a graph. Edge objects are referenced by a Vertex object which is the start point and have a connectsTo reference which is the end point of the edge
+public class GraphEdge<T: Hashable> {
+
+    /// End point of the edge.
+    /// - Note: Weak to avoid retain cycles
+    public internal(set) weak var connectsTo: GraphVertex<T>! // weak to avoid retain cycles
+
+    /// Designated initializer. Clients should not need to create edges directly. This initializer is for Graph class internal usage.
+    public init(connectsTo vertex: GraphVertex<T>) {
+        self.connectsTo = vertex
+    }
+}
+
 /// Graph implementation. Graph implementation backed by a linked list of vertices and each vertex has a linked list for all connections (edges). Implementation is based on Boston university CS class: https://www.cs.bu.edu/teaching/c/graph/linked/
 ///
 /// Example:
@@ -33,12 +81,12 @@ import Foundation
 /// This will be expressed in code as:
 ///
 ///     let graph = Graph<String>()
-///     let f = graph.addVertex(value: "F")
-///     let e = graph.addVertex(value: "E")
-///     let d = graph.addVertex(value: "D")
-///     let c = graph.addVertex(value: "C")
-///     let b = graph.addVertex(value: "B")
 ///     let a = graph.addVertex(value: "A")
+///     let b = graph.addVertex(value: "B")
+///     let c = graph.addVertex(value: "C")
+///     let d = graph.addVertex(value: "D")
+///     let e = graph.addVertex(value: "E")
+///     let f = graph.addVertex(value: "F")
 ///     graph.addEdge(from: a, to: d)
 ///     graph.addEdge(from: a, to: b)
 ///     graph.addEdge(from: c, to: f)
@@ -47,30 +95,8 @@ import Foundation
 ///     graph.addEdge(from: e, to: b)
 ///     graph.addEdge(from: f, to: c)
 ///
-public class GraphVertex<T: Hashable>: Hashable, CustomDebugStringConvertible {
-    public internal(set) var value: T
-    public internal(set) var edges: LinkedList<GraphEdge<T>>?
-    public internal(set) var next: GraphVertex<T>?
-    public init(value: T) {
-        self.value = value
-    }
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(value)
-    }
-    public static func == (lhs: GraphVertex<T>, rhs: GraphVertex<T>) -> Bool {
-        return lhs.value == rhs.value
-    }
-    public var debugDescription: String {
-        return "[\(value)->\(String(describing: next?.value))]"
-    }
-}
-public class GraphEdge<T: Hashable> {
-    public internal(set) weak var connectsTo: GraphVertex<T>! // weak to avoit retain cycles
-    public init(connectsTo vertex: GraphVertex<T>) {
-        self.connectsTo = vertex
-    }
-}
 public class Graph<T: Hashable> {
+
     /// Number of vertices
     public var count: Int {
         return vertices.count
@@ -175,6 +201,10 @@ extension Graph {
         return false
     }
 
+    /// Check if there is a path from one vertex to another.
+    /// - Parameters
+    ///    - from: Start point vertex.
+    ///    - from: End point vertex.
     public func isReachable(from: GraphVertex<T>, to: GraphVertex<T>) -> Bool {
         var visited = [GraphVertex<T>: Bool]()
         return isReachable(from: from, to: to, visited: &visited)
