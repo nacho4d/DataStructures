@@ -42,7 +42,7 @@ final class LinkedListTests: XCTestCase {
         XCTAssertNil(cur?.prev, file: file, line: line)
         
         // check count
-        XCTAssertEqual(list.count, array.count)
+        XCTAssertEqual(list.count, array.count, file: file, line: line)
     }
     
     func testBasics() throws {
@@ -101,6 +101,29 @@ final class LinkedListTests: XCTestCase {
         let notRemoved = list.remove(99)
         assertList(list, [2, 3, 5, 6, 7, 8])
         XCTAssertNil(notRemoved)
+    }
+
+    func testRemove() throws {
+        let list = LinkedList<Int>()
+        XCTAssertEqual(list.count, 0)
+
+        list.append(1)
+        list.append(2)
+        list.append(3)
+        list.append(4)
+        assertList(list, [1, 2, 3, 4])
+
+        list.remove(node: list.first!)
+        assertList(list, [2, 3, 4])
+
+        list.remove(node: list.last!)
+        assertList(list, [2, 3])
+
+        list.remove(node: list.first!)
+        assertList(list, [3])
+
+        list.remove(node: list.last!)
+        assertList(list, [])
     }
     
     func testFindBackwards() throws {
@@ -191,6 +214,7 @@ final class LinkedListTests: XCTestCase {
 
     static var allTests = [
         ("testBasics", testBasics),
+        ("testRemove", testRemove),
         ("testFindBackwards", testFindBackwards),
         ("testInitWithIterable", testInitWithIterable),
         ("testInitWithLinkedNode", testInitWithLinkedNode),

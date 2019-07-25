@@ -11,10 +11,10 @@
 /// ```
 ///     final class MyNode<T>: LinkedListNode {
 ///         typealias Value = T
-///         public internal(set) var value: T
-///         public internal(set) var next: MyNode<T>?
-///         public internal(set) weak var prev: MyNode<T>?
-///         internal required init(value: T) { self.value = value }
+///         public var value: T
+///         public var next: MyNode<T>?
+///         public weak var prev: MyNode<T>?
+///         required init(value: T) { self.value = value }
 ///     }
 ///  ```
 public protocol LinkedListNode: class {
@@ -117,12 +117,13 @@ public class BasicLinkedList<Node: LinkedListNode> {
     ///   - sequence: sequence containing elements to add to linked list.
     public init<S: Sequence>(sequence: S) where S.Element == Node.Value {
         first = nil
-        count = 0
         last = nil
         for e in sequence {
             append(e)
         }
     }
+
+    // MARK: - Iterating and searching
 
     /// Search node that matches given predicate. Return node if found otherwise nil.
     /// - Parameters
@@ -145,76 +146,117 @@ public class BasicLinkedList<Node: LinkedListNode> {
         return cur
     }
 
+    /// Searchs value and return yes if found otherwise no.
+    /// - Complexity: O(*n*), where *n* is the length of the collection.
+    public func contains(node: Node) -> Bool {
+        var cur: Node? = first
+        while cur != nil && cur !== node {
+            cur = cur?.next
+        }
+        return cur === node
+    }
+
+    // MARK: - Inserting at head or tail
+
+    /// Appends given node.
+    /// - Complexity: O(1).
+    public func append(node: Node) {
+        node.prev = last
+        last?.next = node
+        count += 1
+        last = node
+        if first == nil {
+            first = node
+        }
+    }
     /// Appends a new node. Returns newly inserted node.
     /// - Complexity: O(1).
     @discardableResult public func append(_ value: Node.Value) -> Node? {
         let new = BasicLinkedList.node(value: value)
-        new.prev = last
-        last?.next = new
-        count += 1
-        last = new
-        if first == nil {
-            first = new
-        }
+        append(node: new)
         return new
+    }
+
+    /// Insert given node at the beggining.
+    /// - Complexity: O(1).
+    public func insertFirst(node: Node) {
+        first?.prev?.next = node
+        node.next = first
+        node.prev = first?.prev
+        first?.prev = node
+        first = node
+        if last == nil {
+            last = node
+        }
+        count += 1
     }
 
     /// Insert a new node at the beggining. Returns newly inserted node.
     /// - Complexity: O(1).
     @discardableResult public func insertFirst(_ value: Node.Value) -> Node? {
         let new = BasicLinkedList.node(value: value)
-        new.next = first
-        first?.prev = new
-        count += 1
-        first = new
-        if last == nil {
-            last = new
-        }
+        insertFirst(node: new)
         return new
+    }
+
+    // MARK: - Inserting
+
+    /// Inserts a given node after a node.
+    /// - Complexity: O(1).
+    public func insert(node nodeToInsert: Node, after node: Node) {
+        node.next?.prev = nodeToInsert
+        nodeToInsert.prev = node
+        nodeToInsert.next = node.next
+        node.next = nodeToInsert
+        if node === last || last == nil {
+            last = nodeToInsert
+        }
+        count += 1
     }
 
     /// Inserts a new node with given value after given node. Returns newly inserted node.
     /// - Complexity: O(1).
     @discardableResult public func insert(_ value: Node.Value, after node: Node) -> Node {
         let new = BasicLinkedList.node(value: value)
-        new.prev = node
-        new.next = node.next
-        new.next?.prev = new
-        node.next = new
-        count += 1
-        if node === last || last == nil {
-            last = new
-        }
+        insert(node: new, after: node)
         return new
+    }
+
+    public func insert(node nodeToInsert: Node, before node: Node) {
+        node.prev?.next = nodeToInsert
+        nodeToInsert.next = node
+        nodeToInsert.prev = node.prev
+        node.prev = nodeToInsert
+        if node === first {
+            first = nodeToInsert
+        }
+        count += 1
     }
 
     /// Inserts a new node with given value before given node. Returns newly inserted node.
     /// - Complexity: O(1).
     @discardableResult public func insert(_ value: Node.Value, before node: Node) -> Node {
         let new = BasicLinkedList.node(value: value)
-        new.prev = node.prev
-        new.prev?.next = new
-        new.next = node
-        new.next?.prev = new
-        count += 1
-        if node === first {
-            first = new
-        }
+        insert(node: new, before: node)
         return new
     }
+
+    // MARK: - Removing
 
     /// Removes given node.
     /// - Complexity: O(1).
     public func remove(node: Node) {
-        node.next?.prev = node.prev
-        node.prev?.next = node.next
-        count -= 1
         if node === first {
             first = first?.next
         }
         if node === last {
             last = last?.prev
         }
+        node.next?.prev = node.prev
+        node.prev?.next = node.next
+        node.next = nil
+        node.prev = nil
+        count -= 1
     }
 
     /// Removes all objects from the list
@@ -247,16 +289,6 @@ public class BasicLinkedList<Node: LinkedListNode> {
 //    func insert(nodeWithValue value: T, evaluate: ((T) -> Bool)) {
 //        insert(LinkedListNode(value), evaluate: evaluate)
 //    }
-
-    /// Searchs value and return yes if found otherwise no.
-    /// - Complexity: O(*n*), where *n* is the length of the collection.
-    public func contains(node: Node) -> Bool {
-        var cur: Node? = first
-        while cur != nil && cur !== node {
-            cur = cur?.next
-        }
-        return cur === node
-    }
 }
 
 extension BasicLinkedList where Node.Value: Equatable {
