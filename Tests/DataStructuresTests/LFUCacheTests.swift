@@ -29,8 +29,8 @@ final class LFUCacheTests: XCTestCase {
         }
         // Assert objects in dictionary
         XCTAssertEqual(tempDic.count, dictionary.count, "Incorrect numbers of objects in cache. Expected:\(dictionary.count)", file: file, line: line)
-        for pair in tempDic {
-            XCTAssertEqual(tempDic[pair.key], dictionary[pair.key], "Incorrect object for key: \(pair.key). Expected: \(dictionary[pair.key])", file: file, line: line)
+        for pair in dictionary {
+            XCTAssertEqual(tempDic[pair.key], dictionary[pair.key], "Incorrect object for key: \(pair.key). Expected: \(dictionary[pair.key]!)", file: file, line: line)
         }
         XCTAssertEqual(tempLists.count, lists.count, "Incorrect number of frequencies. Expected:\(lists.count)", file: file, line: line)
         let total = lists.reduce(0) { return $0 + $1.1.count }
@@ -147,6 +147,7 @@ final class LFUCacheTests: XCTestCase {
         ("testBasics", testBasics),
         ("testGet", testGet),
         ("testGet2", testGet2),
+        ("testCapacityInitialization", testCapacityInitialization),
         ("testInitWithSequence", testInitWithSequence),
     ]
 }

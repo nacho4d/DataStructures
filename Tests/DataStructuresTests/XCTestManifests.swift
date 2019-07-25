@@ -10,6 +10,7 @@ public func allTests() -> [XCTestCaseEntry] {
         testCase(SortTests.allTests),
         testCase(StackTests.allTests),
         testCase(LFUCacheTests.allTests),
+        testCase(LRUCacheTests.allTests),
     ]
 }
 #endif

@@ -30,7 +30,7 @@ final class FrequencyNode<K, T>: LinkedListNode {
     var nodes = BasicLinkedList<LFUNode<K, T>>()
 }
 
-/// Cache implementation. [O(1) implementation for LFU cache eviction scheme](http://dhruvbird.com/lfu.pdf)
+/// Least Frequently Used Eviction Cache implementation. [O(1) implementation for LFU cache eviction scheme](http://dhruvbird.com/lfu.pdf)
 ///
 ///  Algorithm is based on a Dictionary<Key, Value> to O1 access and a Doubly Linked List of nodes with frequencies (1, 3, 4, 7,...) and each with a linked list of nodes with the values (a, b, c, .... z) to achieve high performance eviction.
 ///
@@ -64,7 +64,7 @@ public class LFUCache<Key: Hashable, Value> {
             self.capacity = capacity
         } else {
             self.capacity = 8
-            print("Capacity must be bigger than 0. Not applying given value")
+            print("Capacity must be bigger than 0. Not applying given value \(capacity)")
         }
     }
 
@@ -139,7 +139,7 @@ public class LFUCache<Key: Hashable, Value> {
         node.key = key
         nodes[key] = node
         if count >= capacity {
-            // There is no more capacity: Delete least recently used object
+            // There is no more capacity: Delete least frequently used, least recently used object
             if let last = frequencies.first?.nodes.last {
                 nodes[last.key] = nil
                 frequencies.first?.nodes.remove(node: last)
