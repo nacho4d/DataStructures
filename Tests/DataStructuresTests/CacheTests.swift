@@ -30,7 +30,7 @@ final class CacheTests: XCTestCase {
         // Assert objects in dictionary
         XCTAssertEqual(tempDic.count, dictionary.count, "Incorrect numbers of objects in cache. Expected:\(dictionary.count)", file: file, line: line)
         for pair in tempDic {
-            XCTAssertTrue(tempDic[pair.key] == dictionary[pair.key], "Incorrect object for key: \(pair.key)", file: file, line: line)
+            XCTAssertEqual(tempDic[pair.key], dictionary[pair.key], "Incorrect object for key: \(pair.key). Expected: \(dictionary[pair.key])", file: file, line: line)
         }
         XCTAssertEqual(tempLists.count, lists.count, "Incorrect number of frequencies. Expected:\(lists.count)", file: file, line: line)
         let total = lists.reduce(0) { return $0 + $1.1.count }
@@ -80,44 +80,48 @@ final class CacheTests: XCTestCase {
     func testBasics() throws {
 
         let cache = LFUCache<Int, String>(capacity: 4)
-        print("Setting cache[1] = 1 ")
         cache[1] = "1"
         assertLfuCache(cache, [1: "1"], [(1, ["1"])])
-        print("Setting cache[2] = 2 ")
         cache[2] = "2"
         assertLfuCache(cache, [1: "1", 2: "2"], [(1, ["2", "1"])])
 
-        print("Setting cache[3] = 3 ")
         cache[3] = "3"
         assertLfuCache(cache, [1: "1", 2: "2", 3: "3"], [(1, ["3", "2", "1"])])
-        print("Setting cache[4] = 4 ")
         cache[4] = "4"
         assertLfuCache(cache, [1: "1", 2: "2", 3: "3", 4: "4"], [(1, ["4", "3", "2", "1"])])
 
-        print("Getting cache[1] (b)")
-        let _ = cache[1]
+        _ = cache[1]
         assertLfuCache(cache, [1: "1", 2: "2", 3: "3", 4: "4"], [(1, ["4", "3", "2"]), (2, ["1"])])
-        print("Getting cache[1] (c)")
-        let _ = cache[1]
+        _ = cache[1]
         assertLfuCache(cache, [1: "1", 2: "2", 3: "3", 4: "4"], [(1, ["4", "3", "2"]), (3, ["1"])])
 
-        print("Setting cache[5] = 5 ")
         cache[5] = "5"
         assertLfuCache(cache, [1: "1", 3: "3", 4: "4", 5: "5"], [(1, ["5", "4", "3"]), (3, ["1"])])
 
-        print("Getting cache[5]")
-        let _ = cache[5]
+        _ = cache[5]
         assertLfuCache(cache, [1: "1", 3: "3", 4: "4", 5: "5"], [(1, ["4", "3"]), (2, ["5"]), (3, ["1"])])
 
-        print("Setting cache[1] = nil ")
         cache[1] = nil
         assertLfuCache(cache, [3: "3", 4: "4", 5: "5"], [(1, ["4", "3"]), (2, ["5"])])
 
-        print("Setting cache[99] = 99 ")
         cache[99] = "99"
         assertLfuCache(cache, [3: "3", 4: "4", 5: "5", 99: "99"], [(1, ["99", "4", "3"]), (2, ["5"])])
-        print("done")
 
+        cache[5] = "5"
+        assertLfuCache(cache, [3: "3", 4: "4", 5: "5", 99: "99"], [(1, ["99", "4", "3"]), (3, ["5"])])
+
+        let c = LFUCache<Int, String>(capacity: 3)
+        c[1] = "1"
+        c[2] = "2"
+        c[3] = "3"
+        _ = c[1]
+        assertLfuCache(c, [1: "1", 2: "2", 3: "3"], [(1, ["3", "2"]), (2, ["1"])])
+        c[1] = "4"
+        assertLfuCache(c, [1: "4", 2: "2", 3: "3"], [(1, ["3", "2"]), (3, ["4"])])
+        _ = c[3]
+        assertLfuCache(c, [1: "4", 2: "2", 3: "3"], [(1, ["2"]), (2, ["3"]), (3, ["4"])])
+        c[8] = "8"
+        assertLfuCache(c, [1: "4", 3: "3", 8: "8"], [(1, ["8"]), (2, ["3"]), (3, ["4"])])
     }
 
     func testInitWithSequence() throws {

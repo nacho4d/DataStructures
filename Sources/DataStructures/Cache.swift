@@ -62,7 +62,6 @@ public class LFUCache<Key: Hashable, Value> {
             guard let node = nodes[key] else {
                 return nil
             }
-            //let frequencyNode: FrequencyNode = node.frequencyNode
             let newFrequency = node.frequencyNode.value + 1
             // Create a new frequency node if its next frequency is not the expected one
             if node.frequencyNode.next?.value != newFrequency {
@@ -96,19 +95,20 @@ public class LFUCache<Key: Hashable, Value> {
             }
 
             if let node = nodes[key] {
+                node.value = value
                 // node was found. Update node's usage
-                let frequencyNode: FrequencyNode = node.frequencyNode
-                let newFrequency = frequencyNode.value + 1
+                let newFrequency = node.frequencyNode.value + 1
                 // Create a new frequency node if its frequency is not the expected one
-                if frequencyNode.next?.value != newFrequency {
+                if node.frequencyNode.next?.value != newFrequency {
                     let newFrequencyNode = FrequencyNode<Key, Value>(value: newFrequency)
                     frequencies.insert(node: newFrequencyNode, after: node.frequencyNode)
                 }
                 // Mode node from current to next list
-                frequencyNode.nodes.remove(node: node)
-                frequencyNode.next?.nodes.insertFirst(node: node)
+                node.frequencyNode.nodes.remove(node: node)
+                node.frequencyNode.next?.nodes.insertFirst(node: node)
+                node.frequencyNode = node.frequencyNode.next
                 // Remove previous frequency node if its list is empty
-                if let frequencyNodePrev = frequencyNode.prev, frequencyNodePrev.nodes.first == nil {
+                if let frequencyNodePrev = node.frequencyNode.prev, frequencyNodePrev.nodes.first == nil {
                     frequencies.remove(node: frequencyNodePrev)
                 }
             } else {
