@@ -18,10 +18,21 @@
 ///     }
 ///  ```
 public protocol LinkedListNode: class {
+    /// Type of element holded by node
     associatedtype Value
+    /// Element holded by node
     var value: Value {get set}
+    /// Reference to next element.
+    /// - Note:
+    /// `next` should not be changed by clients. Setter is for LinkedList interal use only. Changing value leads to undefined behaviour
     var next: Self? {get set}
+    /// Reference to prev element. To avoid retain cycles. This should be defined as weak. See `BasicLinkedListNode`
+    /// - Note:
+    /// `next` should not be changed by clients. Setter is for LinkedList interal use only. Changing value leads to undefined behaviour
     var prev: Self? {get set}
+    /// Designated initializer.
+    /// - Note:
+    /// Nodes are created internally by Linked List objects. Clients should not need to create Node objects by themselves unless implementing a custom node class
     init(value: Value)
 }
 
@@ -63,8 +74,6 @@ final public class BasicLinkedListNode<T>: LinkedListNode {
     public typealias Value = T
 
     /// Strong reference to next element.
-    /// - Note:
-    /// `value` should not be changed by clients. Setter is for LinkedList interal use only. Changing value leads to undefined behaviour
     public var value: T
 
     /// Weak reference to prev element
@@ -106,10 +115,6 @@ public class BasicLinkedList<Node: LinkedListNode> {
             count = 0
             last = first
         }
-    }
-
-    public class func node(value: Node.Value) -> Node {
-        return Node(value: value)
     }
 
     /// Designated initializer. Creates a new instance of a list and add elements from `sequence`.
@@ -172,7 +177,7 @@ public class BasicLinkedList<Node: LinkedListNode> {
     /// Appends a new node. Returns newly inserted node.
     /// - Complexity: O(1).
     @discardableResult public func append(_ value: Node.Value) -> Node? {
-        let new = BasicLinkedList.node(value: value)
+        let new = Node(value: value)
         append(node: new)
         return new
     }
@@ -194,7 +199,7 @@ public class BasicLinkedList<Node: LinkedListNode> {
     /// Insert a new node at the beggining. Returns newly inserted node.
     /// - Complexity: O(1).
     @discardableResult public func insertFirst(_ value: Node.Value) -> Node? {
-        let new = BasicLinkedList.node(value: value)
+        let new = Node(value: value)
         insertFirst(node: new)
         return new
     }
@@ -217,11 +222,12 @@ public class BasicLinkedList<Node: LinkedListNode> {
     /// Inserts a new node with given value after given node. Returns newly inserted node.
     /// - Complexity: O(1).
     @discardableResult public func insert(_ value: Node.Value, after node: Node) -> Node {
-        let new = BasicLinkedList.node(value: value)
+        let new = Node(value: value)
         insert(node: new, after: node)
         return new
     }
 
+    /// Inserts given node before another given node.
     public func insert(node nodeToInsert: Node, before node: Node) {
         node.prev?.next = nodeToInsert
         nodeToInsert.next = node
@@ -236,7 +242,7 @@ public class BasicLinkedList<Node: LinkedListNode> {
     /// Inserts a new node with given value before given node. Returns newly inserted node.
     /// - Complexity: O(1).
     @discardableResult public func insert(_ value: Node.Value, before node: Node) -> Node {
-        let new = BasicLinkedList.node(value: value)
+        let new = Node(value: value)
         insert(node: new, before: node)
         return new
     }
