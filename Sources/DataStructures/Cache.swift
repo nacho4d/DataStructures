@@ -56,85 +56,104 @@ public class LFUCache<Key: Hashable, Value> {
         self.capacity = capacity
     }
 
+    /// Increase frequency of given node .
+    ///
+    /// Steps
+    /// 1. Check next frequency node and create a new node if its frequency is not current frequency + 1
+    /// 2. Move given node to nodes of next frequency node
+    /// 3. If nodes of previous frequency node is empty then remove the frequency node itself
+    internal func increaseFrequency(ofNode node: LFUNode<Key, Value>) {
+        let newFrequency = node.frequencyNode.value + 1
+        // 1. Create a new frequency node if its next frequency is not the expected one
+        if node.frequencyNode.next?.value != newFrequency {
+            let newFrequencyNode = FrequencyNode<Key, Value>(value: newFrequency)
+            frequencies.insert(node: newFrequencyNode, after: node.frequencyNode)
+        }
+        // 2. Move node from current to next list
+        node.frequencyNode.nodes.remove(node: node)
+        node.frequencyNode.next?.nodes.insertFirst(node: node)
+        node.frequencyNode = node.frequencyNode.next
+        // 3. Remove previous frequency node if its list is empty
+        if let frequencyNodePrev = node.frequencyNode.prev, frequencyNodePrev.nodes.first == nil {
+            frequencies.remove(node: frequencyNodePrev)
+        }
+    }
+
+
+    /// Access value for the given key
+    public func value(forKey key: Key) -> Value? {
+        guard let node = nodes[key] else {
+            return nil
+        }
+        increaseFrequency(ofNode: node)
+        return node.value
+    }
+
+    /// Remove key-value pair from cache
+    @discardableResult public func removeValue(forKey key: Key) -> Value? {
+        if let node = nodes[key] {
+            nodes[key] = nil
+            let nodes = node.frequencyNode.nodes
+            node.frequencyNode.nodes.remove(node: node)
+            if nodes.first == nil {
+                frequencies.remove(node: node.frequencyNode)
+            }
+            count -= 1
+            return node.value
+        }
+        return nil
+    }
+
+    /// Updates the value stored in the cache for the given key, or adds a new key-value pair if the key does not exist.
+    /// - Returns: The value that was replaced, or nil if a new key-value pair was added.
+    @discardableResult public func updateValue(_ value: Value, forKey key: Key) -> Value? {
+        if let node = nodes[key] {
+            // Node was found so update the value
+            let oldValue = node.value
+            node.value = value
+            increaseFrequency(ofNode: node)
+            return oldValue
+        } else {
+            // Insert new node
+            let node = LFUNode<Key, Value>(value: value)
+            node.key = key
+            nodes[key] = node
+            if count >= capacity {
+                // There is no more capacity: Delete least recently used object
+                if let last = frequencies.first?.nodes.last {
+                    nodes[last.key] = nil
+                    frequencies.first?.nodes.remove(node: last)
+                }
+                if frequencies.first != nil && frequencies.first!.nodes.first == nil {
+                    frequencies.remove(node: frequencies.first!)
+                }
+                count -= 1
+            }
+            // Insert node (create a new frequency node if needed)
+            if frequencies.first?.value != 1 {
+                frequencies.insertFirst(node: FrequencyNode<Key, Value>(value: 1))
+            }
+            node.frequencyNode = frequencies.first!
+            frequencies.first!.nodes.insertFirst(node: node)
+            count += 1
+            return nil
+        }
+    }
+
     // MARK: Subscripts
     public subscript(key: Key) -> Value? {
         get {
-            guard let node = nodes[key] else {
-                return nil
-            }
-            let newFrequency = node.frequencyNode.value + 1
-            // Create a new frequency node if its next frequency is not the expected one
-            if node.frequencyNode.next?.value != newFrequency {
-                let newFrequencyNode = FrequencyNode<Key, Value>(value: newFrequency)
-                frequencies.insert(node: newFrequencyNode, after: node.frequencyNode)
-            }
-            // Move node from current to next list
-            node.frequencyNode.nodes.remove(node: node)
-            node.frequencyNode.next?.nodes.insertFirst(node: node)
-            node.frequencyNode = node.frequencyNode.next
-            // Remove previous frequency node if its list is empty
-            if let frequencyNodePrev = node.frequencyNode.prev, frequencyNodePrev.nodes.first == nil {
-                frequencies.remove(node: frequencyNodePrev)
-            }
-            return node.value
+            // Get value for given key
+            value(forKey: key)
         }
-
         set {
             guard let value = newValue else {
-                // value is nil then remove key
-                if let node = nodes[key] {
-                    nodes[key] = nil
-                    let nodes = node.frequencyNode.nodes
-                    node.frequencyNode.nodes.remove(node: node)
-                    if nodes.first == nil {
-                        frequencies.remove(node: node.frequencyNode)
-                    }
-                    count -= 1
-                }
+                // If value is nil then remove key-value pair
+                removeValue(forKey: key)
                 return
             }
-
-            if let node = nodes[key] {
-                node.value = value
-                // node was found. Update node's usage
-                let newFrequency = node.frequencyNode.value + 1
-                // Create a new frequency node if its frequency is not the expected one
-                if node.frequencyNode.next?.value != newFrequency {
-                    let newFrequencyNode = FrequencyNode<Key, Value>(value: newFrequency)
-                    frequencies.insert(node: newFrequencyNode, after: node.frequencyNode)
-                }
-                // Mode node from current to next list
-                node.frequencyNode.nodes.remove(node: node)
-                node.frequencyNode.next?.nodes.insertFirst(node: node)
-                node.frequencyNode = node.frequencyNode.next
-                // Remove previous frequency node if its list is empty
-                if let frequencyNodePrev = node.frequencyNode.prev, frequencyNodePrev.nodes.first == nil {
-                    frequencies.remove(node: frequencyNodePrev)
-                }
-            } else {
-                // Insert new node
-                let node = LFUNode<Key, Value>(value: value)
-                node.key = key
-                nodes[key] = node
-                if count >= capacity {
-                    // There is no more capacity: Delete least recently used object
-                    if let last = frequencies.first?.nodes.last {
-                        nodes[last.key] = nil
-                        frequencies.first?.nodes.remove(node: last)
-                    }
-                    if frequencies.first != nil && frequencies.first!.nodes.first == nil {
-                        frequencies.remove(node: frequencies.first!)
-                    }
-                    count -= 1
-                }
-                // Insert node (create a new frequency node if needed)
-                if frequencies.first?.value != 1 {
-                    frequencies.insertFirst(node: FrequencyNode<Key, Value>(value: 1))
-                }
-                node.frequencyNode = frequencies.first!
-                frequencies.first!.nodes.insertFirst(node: node)
-                count += 1
-            }
+            // Update or insert new key-value pair
+            updateValue(value, forKey: key)
         }
     }
 }
