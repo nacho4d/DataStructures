@@ -181,3 +181,30 @@ public class LFUCache<Key: Hashable, Value> {
     }
 }
 
+extension LFUCache: Sequence {
+    /// Iterator implementation
+    public class Iterator<Key, Value>: IteratorProtocol {
+        var cur: LFUNode<Key, Value>?
+
+        /// IteratorProtocol protocol requirement
+        public func next() -> (key: Key, value: Value)? {
+            let v = cur?.value
+            let k = cur?.key
+            if cur?.next == nil {
+                // If tail has been reached then go to next frequency node
+                cur = cur?.frequencyNode.next?.nodes.first
+            } else {
+                cur = cur?.next
+            }
+            return v != nil && k != nil ? (k!, v!) : nil
+        }
+    }
+
+    /// Sequence protocol requirement
+    public func makeIterator() -> Iterator<Key, Value> {
+        let g = LFUCache.Iterator()
+        g.cur = frequencies.first?.nodes.first
+        return g
+    }
+}
+

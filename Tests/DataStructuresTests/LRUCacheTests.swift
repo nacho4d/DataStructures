@@ -86,6 +86,30 @@ final class LRUCacheTests: XCTestCase {
         XCTAssertEqual(c2.capacity, 99)
     }
 
+    func testSequence() throws {
+        let cache = LRUCache<Int, String>(capacity: 4)
+        cache[1] = "1"
+        cache[2] = "2"
+        cache[3] = "3"
+        cache[4] = "4"
+        _ = cache[1]
+        _ = cache[1]
+        cache[5] = "5"
+        _ = cache[5]
+        cache[1] = nil
+        cache[99] = "99"
+        cache[5] = "5"
+        assertLruCache(cache, [3: "3", 4: "4", 5: "5", 99: "99"], [(3, "3"), (4, "4"), (99, "99"), (5, "5")])
+
+        let seq = [(3, "3"), (4, "4"), (99, "99"), (5, "5")]
+        let tempArray = cache.map { $0 }
+        XCTAssertEqual(seq.count, tempArray.count)
+        for i in 0..<tempArray.count {
+            XCTAssertEqual(tempArray[i].key, seq[i].0, "")
+            XCTAssertEqual(tempArray[i].value, seq[i].1)
+        }
+    }
+
     func testInitWithSequence() throws {
     }
 
