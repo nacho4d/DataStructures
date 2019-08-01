@@ -1,10 +1,10 @@
 # DataStructures
 
-Data structures like Doubly Linked Lists, Stacks, Queues, Graphs, LFUCache, Sort and Search algorithms etc. (More comming...)
+Data structures like Doubly Linked Lists, Stacks, Queues, Graphs, PriorityQueue, LFUCache, LRUCache, Sort and Search algorithms etc. (More comming...)
 
-This framework implements a LinkedList which the swift standard library does not provide. LinkedList is used used extensively by several other classes in this framework liks: `Stack`, `Queue`, `Graph`, `LFUCache`, etc. 
+This framework implements a `LinkedList` class which the swift standard library does not provide. `LinkedList` is used extensively by several other classes in this framework like: `Stack`, `Queue`, `Graph`, `LFUCache`, `LRUCache`, etc.
 
-If you prefer an array implementation feel free to use standard `Array` which contains `first`, `last`, `push`, `pop`, etc methods which should allow same functionality; with the obvious difference you will be using an array as an storage instead of a real linked list so time complexity of operations like random access and item remove/modification/addition will change. 
+> **Note**: If you prefer implementations based on array then feel free to use standard `Array` which already contains methods like `first`, `last`, `push`, `pop`, etc which should allow same functionality; with the obvious difference you will be using an array as an storage instead of a real linked list so time complexity of operations like random access and item remove/modification/addition will change.
 
 DataStructures interfaces and implementations are inspired by [some papers](http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.301.6606) and other frameworks like C# .Net and Java SE implementations.
 
@@ -29,6 +29,7 @@ Complexity of each method in this framework is documented. Below table can be us
 | Priority Queue Item Removal/Addition | (Rebuild tree) | O(log *n* ) | O(1) | O(1) | O(1) |
 | Heap sort | Build a max heap, then extract one by one | O(*n* log *n*) | O(*n* log *n*) | O(*n* log *n*) | O(1) | 
 | LFU Cache | Evict least frequently used object | O(1) | O(1) | O(1)| O(*n*) | 
+| LRU Cache | Evict least recently used object | O(1) | O(1) | O(1)| O(*n*) |
 
 
 ### Refreshers:
