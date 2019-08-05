@@ -8,6 +8,7 @@ public func allTests() -> [XCTestCaseEntry] {
         testCase(QueueTests.allTests),
         testCase(SearchTests.allTests),
         testCase(SortTests.allTests),
+        testCase(SortShellTests.allTests),
         testCase(StackTests.allTests),
         testCase(LFUCacheTests.allTests),
         testCase(LRUCacheTests.allTests),
