@@ -8,12 +8,7 @@
 import XCTest
 @testable import DataStructures
 
-final class SortShellTests: XCTestCase {
-
-    override func setUp() {
-        continueAfterFailure = false
-        super.setUp()
-    }
+final class ShellSortTests: BaseTestCase {
 
     func testShellSort() throws {
         var array: [Int]

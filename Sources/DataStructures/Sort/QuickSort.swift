@@ -69,10 +69,10 @@ extension Array {
         var j = high + 1
         repeat {
             repeat {
-                i =  i + 1
+                i += 1
             } while compare(self[i], pivot)
             repeat {
-                j  = j - 1
+                j -= 1
             } while compare(pivot, self[j])
             if i >= j {
                 return j
