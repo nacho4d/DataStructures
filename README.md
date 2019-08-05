@@ -56,10 +56,10 @@ Open package in Xcode 11 or higher and develop as usual.
 
 ## TODOs
 
-- Rethink naming for sorting methods. Specially `(by:)` does not sound OK.
-- Add list property to LinkedListNode as C# implementation. It should help avoid infinite, loops and other weird cases. (Two lists with the same node, etc)
 - Improve documentation specially in sort methods. Mention Order/Space Complexity, better, worst, average case too.
-- Add more sort methods; Shell sort?
-- Add More graph theory structures
+- Rethink naming for sorting methods. Specially `(by:)` does not sound OK.
+- Consider adding `list` property to LinkedListNode (similar to C# implementation). It should help avoiding infinite loops and cases like two lists with the same node, etc.
+- Consider using a single comparator method (Currently three ugly named predicates: `Comparator`, `Comparator2` and `Comparate`)
+- Add more graph theory structures
 - Add more search methods (Breadth First Search (BFS), depth First Search (DFS) )
 - Implement much more stuff from ["Top Algorithms/Data Structures/Concepts every computer science student should know"](https://link.medium.com/i99SUWm4GX)
