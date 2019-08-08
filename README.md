@@ -18,8 +18,8 @@ Complexity of each method in this framework is documented. Below table can be us
 
 | Algorithm | Summary | Time Complexity Worst case | TC Average | TC Best Case | Space Complexity |
 |---|---|---|---|---|---|
-| Bubble Sort | Compare everything with everything | O(*n^2*) | ? | O(*n*) | O(1) |
-| Insertion Sort | Take one by one and insert it | O(*n^2*) | ? | O(*n*) | O(1) |
+| Bubble Sort | Compare everything with everything | O(*n^2*) | О(n2) | O(*n*) | O(1) |
+| Insertion Sort | Take one by one and insert it | O(*n^2*) | O(*n^2*) | O(*n*) | O(1) |
 | Binary Insertion Sort | Same as Insertion Sort but use binary search for insertion | O(*n* log *n*) | O(*n*^2) | O(*n*) | O(1) |
 | Quick Sort | Divide and Conquer. Select pivot and partition, do same for each partition | O(*n*^2) | ? | O(*n* log *n*) | O(1) |
 | Merge Sort | Divide and Conquer. Divide into two halves then sort each. Merge sorted arrays. | O(*n* log *n*) | O(*n* log *n*) | O(*n* log *n*) | O(*n*) |
