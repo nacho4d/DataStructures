@@ -118,11 +118,18 @@ extension Graph {
     /// Remove a vertex from the graph.
     /// - Complexity: Time Complexity is O(*n*^2) where n is number of vertices. Removing vertex it self is O(1) but all edges refering such vertex need to be removed so it becomes O(*n*^2).
     public func removeVertex(_ vertex: GraphVertex<T>) {
+        // Remove vertex itself
         vertices.remove(vertex)
+        // Remove all edges that use given vertex
         for vertex in vertices where vertex.edges != nil {
-            vertex.edges = LinkedList(sequence: vertex.edges!.filter({ (edge) -> Bool in
-                return edge.connectsTo !== vertex
-            }))
+            var edge = vertex.edges!.first
+            while edge != nil {
+                let next = edge!.next
+                if edge!.value.connectsTo == vertex {
+                    vertex.edges!.remove(node: edge!)
+                }
+                edge = next
+            }
         }
     }
 
