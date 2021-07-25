@@ -1,5 +1,6 @@
 #! /bin/bash
-
+GIT_BRANCH=$(git branch | grep '\*' | awk '{print $2}')
+echo GIT_BRANCH $GIT_BRANCH
 sonar-scanner \
   -X \
   -Dsonar.projectKey=DataStructuresKey \
