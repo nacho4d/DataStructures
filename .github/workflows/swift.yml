@@ -17,6 +17,6 @@ jobs:
       run: swift build -v
     - name: Run tests
       run: |
-        xcrun xcodebuild -list; \
-        xcrun xcodebuild -scheme DataStructures-Package test; \
-        echo done;
+        xcrun xcodebuild -list && \
+        xcrun xcodebuild -scheme DataStructures test && \
+        echo done
