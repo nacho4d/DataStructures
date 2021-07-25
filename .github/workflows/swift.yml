@@ -9,9 +9,8 @@ on:
 
 jobs:
   build:
-
+    name: Build
     runs-on: macos-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Build
@@ -31,6 +30,7 @@ jobs:
   sonarcloud:
     name: SonarCloud
     runs-on: ubuntu-latest
+    needs: build
     steps:
       - uses: actions/checkout@v2
         with:
