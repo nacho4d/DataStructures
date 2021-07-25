@@ -19,7 +19,7 @@ jobs:
       run: |
         xcodebuild -list
         xcodebuild -scheme DataStructures test -resultBundlePath "${GITHUB_WORKSPACE}/testResults.xcresult" -enableCodeCoverage YES -quiet
-        xccov-to-sonarqube-generic.sh testResults.xcresult > generic-coverage.xml
+        ./xccov-to-sonarqube-generic.sh testResults.xcresult > generic-coverage.xml
         echo done
     - name: Archive code coverage results
       uses: actions/upload-artifact@v2
