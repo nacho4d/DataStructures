@@ -15,8 +15,14 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build
       run: swift build -v
-    - name: Run tests
+    - name: Test and Analyze
       run: |
-        xcrun xcodebuild -list && \
-        xcrun xcodebuild -scheme DataStructures test && \
+        xcodebuild -list
+        xcodebuild -scheme DataStructures test -resultBundlePath "${GITHUB_WORKSPACE}/testResults.xcresult" -enableCodeCoverage YES -quiet
+        xccov-to-sonarqube-generic.sh testResults.xcresult > generic-coverage.xml
         echo done
+    - name: Archive code coverage results
+      uses: actions/upload-artifact@v2
+      with:
+        name: code-coverage-report
+        path: generic-coverage.xml
