@@ -14,3 +14,6 @@
 # Jazzy generated folders
 /docs/
 /build/
+
+# SonarQube
+.scannerwork/
