@@ -5,18 +5,44 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+    types: [opened, synchronize, reopened]
 
 jobs:
   build:
-
+    name: Build
     runs-on: macos-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Build
       run: swift build -v
-    - name: Run tests
+    - name: Test
       run: |
-        xcrun xcodebuild -list; \
-        xcrun xcodebuild -scheme DataStructures-Package test; \
-        echo done;
+        xcodebuild -list
+        xcodebuild -scheme DataStructures test -resultBundlePath "${GITHUB_WORKSPACE}/testResults.xcresult" -enableCodeCoverage YES -quiet
+        ./xccov-to-sonarqube-generic.sh testResults.xcresult > generic-coverage.xml
+        echo done
+    - name: Upload code coverage results
+      uses: actions/upload-artifact@v2
+      with:
+        name: generic-code-coverage-report
+        path: generic-coverage.xml
+
+  sonarcloud:
+    name: SonarCloud
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Download code coverage report
+        uses: actions/download-artifact@v2
+        with:
+          name: generic-code-coverage-report
+      - name: Check xml exists
+        run: head generic-coverage.xml
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
